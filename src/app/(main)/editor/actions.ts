@@ -2,7 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { resumeSchema, ResumeValues } from "@/lib/validation";
-import { auth } from "@clerk/nextjs/server";
+// //
 import { del, put } from "@vercel/blob";
 import path from "path";
 

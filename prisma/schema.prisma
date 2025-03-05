@@ -76,4 +76,3 @@ model Education {
   updatedAt DateTime @updatedAt
 
   @@map("educations")
-}
