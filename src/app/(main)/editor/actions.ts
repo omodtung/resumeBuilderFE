@@ -2,26 +2,31 @@
 
 import prisma from "@/lib/prisma";
 import { resumeSchema, ResumeValues } from "@/lib/validation";
-// //
 import { del, put } from "@vercel/blob";
 import path from "path";
+import { auth } from "@/lib/auth"; // Assuming you have an auth helper
 
+/**
+ * Save or update a resume in the database.
+ * @param values - The resume data to save.
+ * @returns The saved or updated resume.
+ */
 export async function saveResume(values: ResumeValues) {
   const { id } = values;
 
-  console.log("received values", values);
+  console.log("Received values:", values);
 
+  // Validate the incoming data
   const { photo, workExperiences, educations, ...resumeValues } =
     resumeSchema.parse(values);
 
+  // Authenticate the user
   const { userId } = await auth();
-
   if (!userId) {
     throw new Error("User not authenticated");
   }
 
-  // TODO: Check resume count for non-premium users
-
+  // Check if the resume already exists
   const existingResume = id
     ? await prisma.resume.findUnique({ where: { id, userId } })
     : null;
@@ -30,6 +35,7 @@ export async function saveResume(values: ResumeValues) {
     throw new Error("Resume not found");
   }
 
+  // Handle photo upload or deletion
   let newPhotoUrl: string | undefined | null = undefined;
 
   if (photo instanceof File) {
@@ -49,6 +55,7 @@ export async function saveResume(values: ResumeValues) {
     newPhotoUrl = null;
   }
 
+  // Update or create the resume
   if (id) {
     return prisma.resume.update({
       where: { id },
@@ -56,7 +63,7 @@ export async function saveResume(values: ResumeValues) {
         ...resumeValues,
         photoUrl: newPhotoUrl,
         workExperiences: {
-          deleteMany: {},
+          deleteMany: {}, // Clear existing work experiences
           create: workExperiences?.map((exp) => ({
             ...exp,
             startDate: exp.startDate ? new Date(exp.startDate) : undefined,
@@ -64,7 +71,7 @@ export async function saveResume(values: ResumeValues) {
           })),
         },
         educations: {
-          deleteMany: {},
+          deleteMany: {}, // Clear existing educations
           create: educations?.map((edu) => ({
             ...edu,
             startDate: edu.startDate ? new Date(edu.startDate) : undefined,

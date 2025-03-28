@@ -8,11 +8,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { EditorFormProps } from "@/lib/types";
 import { generalInfoSchema, GeneralInfoValues } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { saveResume } from "../actions";
 
 export default function GeneralInfoForm({
   resumeData,
@@ -35,22 +37,39 @@ export default function GeneralInfoForm({
     return unsubscribe;
   }, [form, resumeData, setResumeData]);
 
+  const handleSubmit = async (values: GeneralInfoValues) => {
+    try {
+      const updatedResume = await saveResume({
+        ...resumeData,
+        ...values,
+      });
+      setResumeData(updatedResume);
+      alert("Resume saved successfully!");
+    } catch (error) {
+      console.error("Failed to save resume:", error);
+      alert("Failed to save resume. Please try again.");
+    }
+  };
+
   return (
     <div className="mx-auto max-w-xl space-y-6">
       <div className="space-y-1.5 text-center">
-        <h2 className="text-2xl font-semibold">General info</h2>
+        <h2 className="text-2xl font-semibold">General Info</h2>
         <p className="text-sm text-muted-foreground">
           This will not appear on your resume.
         </p>
       </div>
       <Form {...form}>
-        <form className="space-y-3">
+        <form
+          className="space-y-3"
+          onSubmit={form.handleSubmit(handleSubmit)}
+        >
           <FormField
             control={form.control}
             name="title"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Project name</FormLabel>
+                <FormLabel>Project Name</FormLabel>
                 <FormControl>
                   <Input {...field} placeholder="My cool resume" autoFocus />
                 </FormControl>
@@ -74,6 +93,9 @@ export default function GeneralInfoForm({
               </FormItem>
             )}
           />
+          <Button type="submit" className="w-full">
+            Save
+          </Button>
         </form>
       </Form>
     </div>
