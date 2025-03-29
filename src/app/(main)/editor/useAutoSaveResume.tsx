@@ -4,7 +4,6 @@ import useDebounce from "@/hooks/useDebounce";
 import { ResumeValues } from "@/lib/validation";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { saveResume } from "./actions";
 import { fileReplacer } from "@/lib/utils";
 
 export default function useAutoSaveResume(resumeData: ResumeValues) {
@@ -35,14 +34,19 @@ export default function useAutoSaveResume(resumeData: ResumeValues) {
 
         const newData = structuredClone(debouncedResumeData);
 
-        const updatedResume = await saveResume({
-          ...newData,
-          ...(JSON.stringify(lastSavedData.photo, fileReplacer) ===
-            JSON.stringify(newData.photo, fileReplacer) && {
-            photo: undefined,
-          }),
-          id: resumeId,
+        const response = await fetch(`/api/resumes${resumeId ? `/${resumeId}` : ""}`, {
+          method: resumeId ? "PUT" : "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newData),
         });
+
+        if (!response.ok) {
+          throw new Error("Failed to save resume");
+        }
+
+        const updatedResume = await response.json();
 
         setResumeId(updatedResume.id);
         setLastSavedData(newData);
@@ -80,12 +84,6 @@ export default function useAutoSaveResume(resumeData: ResumeValues) {
         setIsSaving(false);
       }
     }
-
-    console.log(
-      "debouncedResumeData",
-      JSON.stringify(debouncedResumeData, fileReplacer),
-    );
-    console.log("lastSavedData", JSON.stringify(lastSavedData, fileReplacer));
 
     const hasUnsavedChanges =
       JSON.stringify(debouncedResumeData, fileReplacer) !==
