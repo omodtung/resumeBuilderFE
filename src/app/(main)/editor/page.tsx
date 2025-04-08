@@ -10,9 +10,9 @@ export const metadata: Metadata = {
 };
 
 export default async function Page({ searchParams }: PageProps) {
-  const { resumeId } = searchParams;
-
-  const response = await fetch(`/api/resumes${resumeId ? `/${resumeId}` : ""}`, {
+  const { resumeId } = await searchParams;
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000"; // Replace with your actual base URL
+  const response = await fetch(`${baseUrl}/api/resumes${resumeId ? `/${resumeId}` : ""}`, {
     cache: "no-store",
   });
 

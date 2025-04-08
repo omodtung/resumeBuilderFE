@@ -31,6 +31,8 @@ export default function ResumeEditor({ resumeToEdit }: ResumeEditorProps) {
 
   const currentStep = searchParams.get("step") || steps[0].key;
 
+  
+
   function setStep(key: string) {
     const newSearchParams = new URLSearchParams(searchParams);
     newSearchParams.set("step", key);
@@ -40,6 +42,9 @@ export default function ResumeEditor({ resumeToEdit }: ResumeEditorProps) {
   const FormComponent = steps.find(
     (step) => step.key === currentStep,
   )?.component;
+
+  console.log("Current Step:", currentStep);
+  console.log("Form Component:", FormComponent);
 
   return (
     <div className="flex grow flex-col">
