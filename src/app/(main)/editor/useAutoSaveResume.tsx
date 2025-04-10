@@ -32,33 +32,48 @@ export default function useAutoSaveResume(resumeData: ResumeValues) {
       try {
         setIsSaving(true);
         setIsError(false);
-
+    
         const newData = structuredClone(debouncedResumeData);
-
-        const updatedResume = await saveResume({
-          ...newData,
-          ...(JSON.stringify(lastSavedData.photo, fileReplacer) ===
-            JSON.stringify(newData.photo, fileReplacer) && {
-            photo: undefined,
+    
+        // Make a POST request to the backend API
+        const response = await fetch(`/admin/resumes/${resumeId || ""}`, {
+          method: resumeId ? "PUT" : "POST", // Use POST for new resumes, PUT for updates
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...newData,
+            ...(JSON.stringify(lastSavedData.photo, fileReplacer) ===
+              JSON.stringify(newData.photo, fileReplacer) && {
+              photo: undefined,
+            }),
           }),
-          id: resumeId,
         });
-
+    
+        if (!response.ok) {
+          throw new Error(`Failed to save resume: ${response.statusText}`);
+        }
+    
+        const updatedResume = await response.json();
+    
         setResumeId(updatedResume.id);
         setLastSavedData(newData);
-
+    
+        // Update the URL with the new resume ID if it has changed
         if (searchParams.get("resumeId") !== updatedResume.id) {
           const newSearchParams = new URLSearchParams(searchParams);
           newSearchParams.set("resumeId", updatedResume.id);
           window.history.replaceState(
             null,
             "",
-            `?${newSearchParams.toString()}`,
+            `?${newSearchParams.toString()}`
           );
         }
       } catch (error) {
         setIsError(true);
         console.error(error);
+    
+        // Show a toast notification for the error
         const { dismiss } = toast({
           variant: "destructive",
           description: (
@@ -68,7 +83,7 @@ export default function useAutoSaveResume(resumeData: ResumeValues) {
                 variant="secondary"
                 onClick={() => {
                   dismiss();
-                  save();
+                  save(); // Retry saving
                 }}
               >
                 Retry
