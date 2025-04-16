@@ -13,8 +13,8 @@ export default function ManageSubscriptionButton() {
   async function handleClick() {
     try {
       setLoading(true);
-      const redirectUrl = await createCustomerPortalSession();
-      window.location.href = redirectUrl;
+      // const redirectUrl = await createCustomerPortalSession();
+      // window.location.href = redirectUrl;
     } catch (error) {
       console.error(error);
       toast({

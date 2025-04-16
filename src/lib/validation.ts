@@ -87,6 +87,6 @@ export const resumeSchema = z.object({
 });
 
 export type ResumeValues = Omit<z.infer<typeof resumeSchema>, "photo"> & {
-  id?: string;
+  id?: number;
   photo?: File | string | null;
 };
