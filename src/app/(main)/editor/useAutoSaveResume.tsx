@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import useDebounce from "@/hooks/useDebounce";
@@ -6,59 +8,52 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { saveResume } from "./actions";
 import { fileReplacer } from "@/lib/utils";
+import { useAuth } from "@/lib/auth";
 
 export default function useAutoSaveResume(resumeData: ResumeValues) {
   const searchParams = useSearchParams();
-
   const { toast } = useToast();
-
   const debouncedResumeData = useDebounce(resumeData, 1500);
-
   const [resumeId, setResumeId] = useState(resumeData.id);
-
-  const [lastSavedData, setLastSavedData] = useState(
-    structuredClone(resumeData),
-  );
-
+  const [lastSavedData, setLastSavedData] = useState(structuredClone(resumeData));
   const [isSaving, setIsSaving] = useState(false);
   const [isError, setIsError] = useState(false);
+  const { token } = useAuth();
 
   useEffect(() => {
     setIsError(false);
   }, [debouncedResumeData]);
 
   useEffect(() => {
-    async function save() {
+    async function save(token: string | null) {
       try {
         setIsSaving(true);
         setIsError(false);
-    
+
         const newData = structuredClone(debouncedResumeData);
-    
+
+        console.log(newData);
         // Make a POST request to the backend API
         const response = await fetch(`/admin/resumes/${resumeId || ""}`, {
-          method: resumeId ? "PUT" : "POST", // Use POST for new resumes, PUT for updates
+          method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             ...newData,
-            ...(JSON.stringify(lastSavedData.photo, fileReplacer) ===
-              JSON.stringify(newData.photo, fileReplacer) && {
-              photo: undefined,
-            }),
           }),
         });
-    
+
         if (!response.ok) {
           throw new Error(`Failed to save resume: ${response.statusText}`);
         }
-    
+
         const updatedResume = await response.json();
-    
+
         setResumeId(updatedResume.id);
         setLastSavedData(newData);
-    
+
         // Update the URL with the new resume ID if it has changed
         if (searchParams.get("resumeId") !== updatedResume.id) {
           const newSearchParams = new URLSearchParams(searchParams);
@@ -72,7 +67,7 @@ export default function useAutoSaveResume(resumeData: ResumeValues) {
       } catch (error) {
         setIsError(true);
         console.error(error);
-    
+
         // Show a toast notification for the error
         const { dismiss } = toast({
           variant: "destructive",
@@ -83,7 +78,7 @@ export default function useAutoSaveResume(resumeData: ResumeValues) {
                 variant="secondary"
                 onClick={() => {
                   dismiss();
-                  save(); // Retry saving
+                  save(token); // Retry saving
                 }}
               >
                 Retry
@@ -107,7 +102,7 @@ export default function useAutoSaveResume(resumeData: ResumeValues) {
       JSON.stringify(lastSavedData, fileReplacer);
 
     if (hasUnsavedChanges && debouncedResumeData && !isSaving && !isError) {
-      save();
+      save(token);
     }
   }, [
     debouncedResumeData,
@@ -117,6 +112,7 @@ export default function useAutoSaveResume(resumeData: ResumeValues) {
     resumeId,
     searchParams,
     toast,
+    token,
   ]);
 
   return {

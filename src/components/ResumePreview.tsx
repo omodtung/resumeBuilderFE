@@ -10,6 +10,7 @@ import { Badge } from "./ui/badge";
 interface ResumePreviewProps {
   resumeData: ResumeValues;
   className?: string;
+  contentRef?: React.RefObject<HTMLDivElement>;
 }
 
 export default function ResumePreview({

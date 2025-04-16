@@ -3,18 +3,21 @@
 
 import { Button } from "@/components/ui/button";
 import { PlusSquare } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useAuth } from "@/lib/auth";
 
 export default function NewResumeButton() {
-  const createResume = async () => {
+  const { token } = useAuth();
+
+  const createResume = async (token: string | null) => {
     try {
       const response = await fetch("http://localhost:8080/admin/resumes", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqb2huZG9lIiwiaWF0IjoxNzQ0Mjk4MTUxLCJleHAiOjE3NDQzODQ1NTF9.CL10mN1UHiieR-F_gXh63CgmYXgd8DC8-YEc08jc_k0",
+          Authorization: `Bearer ${token}`,
         },
-        body: null,
+        body: JSON.stringify({}),
       });
 
       if (!response.ok) {
@@ -30,7 +33,7 @@ export default function NewResumeButton() {
   };
 
   const handleNewResumeClick = async () => {
-    const resumeId = await createResume();
+    const resumeId = await createResume(token);
     if (resumeId) {
       window.location.href = `/editor?resumeId=${resumeId}`;
     }
