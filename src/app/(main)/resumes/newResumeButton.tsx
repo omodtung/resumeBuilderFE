@@ -17,7 +17,7 @@ export default function NewResumeButton() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({}),
+        body: null,
       });
 
       if (!response.ok) {

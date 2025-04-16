@@ -1,3 +1,4 @@
+
 "use client";
 
 import prisma from "@/lib/prisma";
@@ -8,20 +9,34 @@ import { useEffect, useState } from "react";
 import { JwtPayload } from "jsonwebtoken";
 import { useAuth } from "@/lib/auth";
 
+
 interface PageProps {
   searchParams: Promise<{ resumeId?: string }>;
 }
 
 
 
-export default async function Page({ searchParams }: PageProps) {
+export default function Page({ searchParams }: PageProps) {
   const { userId, token } = useAuth();
   const [resumeToEdit, setResumeToEdit] = useState<ResumeServerData | null>(null);
-  const { resumeId } = await searchParams as { resumeId?: string };
+  const [resumeId, setResumeId] = useState<string | null>(null);
 
   useEffect(() => {
-    async function fetchResume(resumeId: string, token: string | null): Promise<ResumeServerData | null> {
+    async function resolveSearchParams() {
       try {
+        const resolvedSearchParams = await searchParams; // Resolve the Promise
+        setResumeId(resolvedSearchParams.resumeId || null); // Extract resumeId and update state
+      } catch (error) {
+        console.error("Error resolving searchParams:", error);
+      }
+    }
+
+    resolveSearchParams();
+  }, [searchParams]);
+
+  useEffect(() => {
+    async function fetchResume(resumeId: string, token: string ) {
+      
         const response = await fetch(`http://localhost:8080/admin/resumes/${resumeId}`, {
           headers: {
             "Content-Type": "application/json",
@@ -29,19 +44,16 @@ export default async function Page({ searchParams }: PageProps) {
           },
           cache: "no-store",
         });
-
+        
         if (response.ok) {
           const data = await response.json();
           console.log("Resume data:", data.resume);
           return data.resume;
         } else {
           console.error("Failed to fetch resume");
-          return null;
+          
         }
-      } catch (error) {
-        console.error("Error fetching resume:", error);
-        return null;
-      }
+      
     }
 
     if (token && resumeId) {

@@ -1,49 +1,53 @@
+"use client";
+
 import { Metadata } from "next";
 import Link from "next/link";
 import NewResumeButton from "./newResumeButton";
 import ResumeItem from "./ResumeItem";
 import { ResumeServerData } from "@/lib/types";
+import { useState, useEffect } from "react";
 
-interface PageProps {
-  token: string | null;
-}
 
-export const metadata: Metadata = {
-  title: "Your resumes",
-};
 
-export default async function Page({ token }: PageProps) {
-  async function fetchResumes(token: string | null): Promise<ResumeServerData[]> {
-    try {
-      const response = await fetch("http://localhost:8080/user/resumes-individual", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        cache: "no-store",
-      });
+export default function Page() {
+  const [resumes, setResumes] = useState<ResumeServerData[]>([]);
+  const [token, setToken] = useState<string | null>(null);
 
-      if (response.ok) {
-        const data = await response.json();
-        console.log("Resumes received from API:", data);
-        return data || [];
-      } else {
-        console.error("Failed to fetch resumes");
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setToken(sessionStorage.getItem('token'));
+    }
+  }, []);
+
+  useEffect(() => {
+    async function fetchResumes(token: string | null): Promise<ResumeServerData[]> {
+      try {
+        const response = await fetch("http://localhost:8080/user/resumes-individual", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          cache: "no-store",
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log("Resumes received from API:", data);
+          return data || [];
+        } else {
+          console.error("Failed to fetch resumes");
+          return [];
+        }
+      } catch (error) {
+        console.error("Error fetching resumes:", error);
         return [];
       }
     }
 
-    catch (error) {
-      console.error("Error fetching resumes:", error);
-      return [];
+    if (token) {
+      fetchResumes(token).then(data => setResumes(data));
     }
-  }
-
-  let resumes: ResumeServerData[] = [];
-
-  if (token) {
-    resumes = await fetchResumes(token);
-  }
+  }, [token]);
 
   return (
     <main className="mx-auto w-full max-w-7xl space-y-6 px-3 py-6">

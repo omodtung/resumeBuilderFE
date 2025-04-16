@@ -5,28 +5,15 @@ import { Metadata } from "next";
 import Stripe from "stripe";
 import GetSubscriptionButton from "./GetSubscriptionButton";
 import ManageSubscriptionButton from "./ManageSubscriptionButton";
+import { useAuth } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: "Billing",
 };
 
-async function getUserId() {
-  try {
-    const token = sessionStorage.getItem('token');
-    if (!token) {
-      console.error("No token found in session storage");
-      return null;
-    }
-    const decoded = jwtDecode<JwtPayload>(token);
-    return decoded.sub; // returns the user id
-  } catch (error) {
-    console.error("Invalid token", error);
-    return null;
-  }
-}
 
 export default async function Page() {
-  const { userId } = await getUserId();
+  const { userId, token } = useAuth();
 
   if (!userId) {
     return null;
