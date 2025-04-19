@@ -1,3 +1,6 @@
+
+import { useEffect, useRef, useState } from "react";
+import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -11,13 +14,14 @@ import { Input } from "@/components/ui/input";
 import { EditorFormProps } from "@/lib/types";
 import { personalInfoSchema, PersonalInfoValues } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useRef } from "react";
-import { useForm } from "react-hook-form";
 
 export default function PersonalInfoForm({
   resumeData,
   setResumeData,
 }: EditorFormProps) {
+  const [photoUrl, setPhotoUrl] = useState<string | undefined>(
+    resumeData.photoUrl,
+  );
   const form = useForm<PersonalInfoValues>({
     resolver: zodResolver(personalInfoSchema),
     defaultValues: {
@@ -28,6 +32,7 @@ export default function PersonalInfoForm({
       country: resumeData.country || "",
       phone: resumeData.phone || "",
       email: resumeData.email || "",
+      photoUrl: resumeData.photoUrl || "",
     },
   });
 
@@ -35,12 +40,46 @@ export default function PersonalInfoForm({
     const { unsubscribe } = form.watch(async (values) => {
       const isValid = await form.trigger();
       if (!isValid) return;
-      setResumeData({ ...resumeData, ...values });
+      setResumeData({ ...resumeData, ...values, photoUrl: photoUrl });
     });
     return unsubscribe;
-  }, [form, resumeData, setResumeData]);
+  }, [form, resumeData, setResumeData, photoUrl]);
 
   const photoInputRef = useRef<HTMLInputElement>(null);
+
+  const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    form.setValue("photo", file);
+
+    // Upload the file to the server
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await fetch("http://localhost:8080/upload-file-cv", {
+        method: "POST",
+        body: formData,
+        headers: {
+          isResume: "true",
+          idResume: resumeData.id?.toString() || "",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to upload image: ${response.statusText}`);
+      }
+
+      const data = await response.text();
+      const imageName = data;
+      const imageUrl = `http://localhost:8080/images/avatar/${imageName}`;
+      console.log("Image URL:", imageUrl);
+      setPhotoUrl(imageUrl);
+    } catch (error: any) {
+      console.error("Error uploading image:", error);
+    }
+  };
 
   return (
     <div className="mx-auto max-w-xl space-y-6">
@@ -62,10 +101,7 @@ export default function PersonalInfoForm({
                       {...fieldValues}
                       type="file"
                       accept="image/*"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        fieldValues.onChange(file);
-                      }}
+                      onChange={handlePhotoChange}
                       ref={photoInputRef}
                     />
                   </FormControl>
@@ -74,6 +110,7 @@ export default function PersonalInfoForm({
                     type="button"
                     onClick={() => {
                       fieldValues.onChange(null);
+                      setPhotoUrl(undefined);
                       if (photoInputRef.current) {
                         photoInputRef.current.value = "";
                       }
@@ -82,6 +119,13 @@ export default function PersonalInfoForm({
                     Remove
                   </Button>
                 </div>
+                {photoUrl && (
+                  <img
+                    src={photoUrl}
+                    alt="Preview"
+                    className="mt-2 h-20 w-20 rounded-full object-cover"
+                  />
+                )}
                 <FormMessage />
               </FormItem>
             )}
@@ -118,22 +162,8 @@ export default function PersonalInfoForm({
             control={form.control}
             name="jobTitle"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Job title</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <div className="grid grid-cols-2 gap-3">
-            <FormField
-              control={form.control}
-              name="city"
-              render={({ field }) => (
                 <FormItem>
-                  <FormLabel>City</FormLabel>
+                  <FormLabel>Job title</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -141,48 +171,62 @@ export default function PersonalInfoForm({
                 </FormItem>
               )}
             />
+            <div className="grid grid-cols-2 gap-3">
+              <FormField
+                control={form.control}
+                name="city"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>City</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="country"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Country</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
             <FormField
               control={form.control}
-              name="country"
+              name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Country</FormLabel>
+                  <FormLabel>Phone</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} type="tel" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-          </div>
-          <FormField
-            control={form.control}
-            name="phone"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Phone</FormLabel>
-                <FormControl>
-                  <Input {...field} type="tel" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input {...field} type="email" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </form>
-      </Form>
-    </div>
-  );
-}
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input {...field} type="email" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </form>
+        </Form>
+      </div>
+    );
+  }

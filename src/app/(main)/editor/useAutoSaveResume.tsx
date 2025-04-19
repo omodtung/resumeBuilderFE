@@ -40,9 +40,7 @@ export default function useAutoSaveResume(resumeData: ResumeValues) {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({
-            ...newData,
-          }),
+          body: JSON.stringify(newData),
         });
 
         if (!response.ok) {
