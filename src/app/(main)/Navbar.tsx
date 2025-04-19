@@ -12,9 +12,11 @@ import Image from "next/image";
 import Link from "next/link";
 import {jwtDecode} from "jwt-decode";
 import LoginModal from "@/components/LoginModal";
+import AccountSettingsDialog from "@/components/AccountSettingsDialog";
 
-function UserMenu() {
+function UserMenu({username}: {username: string}) {
   const [open, setOpen] = useState(false);
+  const [accountSettingsOpen, setAccountSettingsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -48,6 +50,9 @@ function UserMenu() {
               Billing
             
           </Link>
+          <Link href="#" onClick={() => setAccountSettingsOpen(true)} className="flex items-center px-4 py-2 text-sm text-gray-700 border rounded-md hover:border-blue-500 bg-white hover:bg-gray-100">
+            Account Settings
+          </Link>
           <div className="mt-1" />
           <button
             onClick={() => {
@@ -60,6 +65,7 @@ function UserMenu() {
           </button>
         </div>
       )}
+      <AccountSettingsDialog open={accountSettingsOpen} setOpen={setAccountSettingsOpen} username={username}/>
     </div>
   );
 }
@@ -67,6 +73,7 @@ function UserMenu() {
 export default function Navbar() {
   const { theme } = useTheme();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [username, setUsername] = useState("");
 
   useEffect(() => {
     async function checkToken() {
@@ -74,16 +81,19 @@ export default function Navbar() {
         const token = sessionStorage.getItem('token'); // Retrieve token from sessionStorage
         console.log(token);
         if (token) {
-          const decoded = jwtDecode<{ sub: string }>(token);
+          const decoded = jwtDecode<{ sub: string, username: string }>(token);
           if (decoded && decoded.sub) {
             setIsLoggedIn(true);
+            setUsername(decoded.sub || "username");
           }
         } else {
           setIsLoggedIn(false);
+          setUsername("");
         }
       } catch (error) {
         console.error("Error fetching token", error);
         setIsLoggedIn(false);
+        setUsername("");
       }
     }
 
@@ -108,7 +118,7 @@ export default function Navbar() {
         <div className="flex items-center gap-3">
           <ThemeToggle />
           {isLoggedIn ? (
-            <UserMenu />
+            <UserMenu username={username}/>
           ) : (
             <LoginModal />
           )}
