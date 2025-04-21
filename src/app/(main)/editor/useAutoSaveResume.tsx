@@ -34,8 +34,8 @@ export default function useAutoSaveResume(resumeData: ResumeValues) {
 
         console.log(newData);
         // Make a POST request to the backend API
-        const response = await fetch(`/admin/resumes/${resumeId || ""}`, {
-          method: "POST",
+        const response = await fetch(`http://localhost:8080/admin/resumes/${resumeId || ""}`, {
+          method: "PATCH",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,

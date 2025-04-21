@@ -1,50 +1,30 @@
-"use server";
+"use client";
 
-import { env } from "@/env";
-import stripe from "@/lib/stripe";
-import { useAuth } from "@/lib/auth";
 
-export async function createCheckoutSession(priceId: string) {
-  const { userId, token, userData } = useAuth();
+export async function handleCheckoutPayment(planId: number, token: string): Promise<string | null> {
 
-  if (!userId) {
+  if (!token) {
     throw new Error("Unauthorized");
   }
 
-  const stripeCustomerId = userData.user_subscriptions.stripe_customer_id  as
-    | string
-    | undefined;
-
-  const session = await stripe.checkout.sessions.create({
-    line_items: [{ price: priceId, quantity: 1 }],
-    mode: "subscription",
-    success_url: `${env.NEXT_PUBLIC_BASE_URL}/billing/success`,
-    cancel_url: `${env.NEXT_PUBLIC_BASE_URL}/billing`,
-    customer: stripeCustomerId,
-    customer_email: stripeCustomerId
-      ? undefined
-      : userData.email,
-    metadata: {
-      userId: userData.id,
-    },
-    subscription_data: {
-      metadata: {
-        userId: userData.id,
+  try {
+    const res = await fetch(`http://localhost:8080/checkout-payment?PlanId=${planId}`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
-    },
-    custom_text: {
-      terms_of_service_acceptance: {
-        message: `I have read AI Resume Builder's [terms of service](${env.NEXT_PUBLIC_BASE_URL}/tos) and agree to them.`,
-      },
-    },
-    consent_collection: {
-      terms_of_service: "required",
-    },
-  });
+    });
 
-  if (!session.url) {
-    throw new Error("Failed to create checkout session");
+    if (res.ok) {
+      const data = await res.json();
+      return data.sessionUrl;
+    } else {
+      console.error("Checkout failed:", res.status, res.statusText);
+      return null;
+    }
+  } catch (error) {
+    console.error("Error during checkout:", error);
+    return null;
   }
-
-  return session.url;
 }

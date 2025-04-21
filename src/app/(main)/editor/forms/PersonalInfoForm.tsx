@@ -55,7 +55,7 @@ export default function PersonalInfoForm({
 
     // Upload the file to the server
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("File", file);
 
     try {
       const response = await fetch("http://localhost:8080/upload-file-cv", {
@@ -108,11 +108,28 @@ export default function PersonalInfoForm({
                   <Button
                     variant="secondary"
                     type="button"
-                    onClick={() => {
+                    onClick={async () => {
                       fieldValues.onChange(null);
                       setPhotoUrl(undefined);
                       if (photoInputRef.current) {
                         photoInputRef.current.value = "";
+                      }
+
+                      try {
+                        const response = await fetch("http://localhost:8080/delete-upload-file-cv", {
+                          method: "POST",
+                          headers: {
+                            idResume: resumeData.id?.toString() || "",
+                          },
+                        });
+
+                        if (!response.ok) {
+                          throw new Error(`Failed to delete image: ${response.statusText}`);
+                        }
+
+                        console.log("Image deleted successfully");
+                      } catch (error: any) {
+                        console.error("Error deleting image:", error);
                       }
                     }}
                   >

@@ -1,5 +1,6 @@
 
 import { Toaster } from "@/components/ui/toaster";
+import PremiumModal from "@/components/premium/PremiumModal";
 
 import type { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
@@ -34,6 +35,7 @@ export default function RootLayout({
           >
             {children}
             <Toaster />
+            <PremiumModal />
           </ThemeProvider>
         </body>
       </html>

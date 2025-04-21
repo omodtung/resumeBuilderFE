@@ -1,11 +1,20 @@
 "use client";
 
+
 import { Admin, Resource } from 'react-admin';
 import { UserList } from './users';
-import simpleRestProvider from 'ra-data-simple-rest';
+import UserEdit from './edits/userEdit';
+import UserCreate from './edits/UserCreate';
+import ResumeCreate from './edits/ResumeCreate';
+import { ResumeList } from './resumes';
+import UserSubscriptionList from './UserSubscriptionList';
+import ResumeEdit from './edits/ResumeEdit';
+import UserSubscriptionEdit from './edits/UserSubscriptionEdit';
+import PlanList from './PlanList';
+import PlanEdit from './edits/PlanEdit';
+import PlanCreate from './edits/PlanCreate';
 import { useEffect, useState } from 'react';
-
-const dataProvider = simpleRestProvider('http://localhost:8080/admin');
+import { dataProvider } from './DataProvider';
 
 function AdminPage() {
   const [isClient, setIsClient] = useState(false);
@@ -18,7 +27,10 @@ function AdminPage() {
     <>
       {isClient ? (
         <Admin dataProvider={dataProvider}>
-          <Resource name="users" list={UserList} />
+          <Resource name="users" list={UserList} edit={UserEdit} create={UserCreate} />
+          <Resource name="user_subscriptions" list={UserSubscriptionList} edit={UserSubscriptionEdit} />
+          <Resource name="resumes" list={ResumeList} edit={ResumeEdit} create={ResumeCreate} />
+          <Resource name="plans" list={PlanList} edit={PlanEdit} create={PlanCreate} />
         </Admin>
       ) : null}
     </>

@@ -81,10 +81,56 @@ export default function Navbar() {
         const token = sessionStorage.getItem('token'); // Retrieve token from sessionStorage
         console.log(token);
         if (token) {
-          const decoded = jwtDecode<{ sub: string, username: string }>(token);
-          if (decoded && decoded.sub) {
-            setIsLoggedIn(true);
-            setUsername(decoded.sub || "username");
+          try {
+            const decoded = jwtDecode<{ sub: string, username: string, exp: number }>(token);
+            if (decoded && decoded.exp) {
+              const isExpired = decoded.exp * 1000 < Date.now();
+
+              if (isExpired) {
+                // Refresh the token
+                try {
+                  const token = sessionStorage.getItem('token');
+                  const response = await fetch('/auth-controller/refreshToken', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      'Authorization': `Bearer ${token}`,
+                    },
+                  });
+
+                  if (response.ok) {
+                    const data = await response.json();
+                    const newToken = data.accessToken; // Assuming the response contains a new token
+                    sessionStorage.setItem('token', newToken); // Store the new token
+                    const newDecoded = jwtDecode<{ sub: string, username: string }>(newToken);
+                    setIsLoggedIn(true);
+                    setUsername(newDecoded.sub || "username");
+                  } else {
+                    console.error("Failed to refresh token", response.status);
+                    setIsLoggedIn(false);
+                    setUsername("");
+                    sessionStorage.removeItem('token');
+                    window.location.reload();
+                  }
+                } catch (refreshError) {
+                  console.error("Error refreshing token", refreshError);
+                  setIsLoggedIn(false);
+                  setUsername("");
+                  sessionStorage.removeItem('token');
+                  window.location.reload();
+                }
+              } else {
+                setIsLoggedIn(true);
+                setUsername(decoded.sub || "username");
+              }
+            } else {
+              setIsLoggedIn(false);
+              setUsername("");
+            }
+          } catch (error) {
+            console.error("Error decoding token", error);
+            setIsLoggedIn(false);
+            setUsername("");
           }
         } else {
           setIsLoggedIn(false);

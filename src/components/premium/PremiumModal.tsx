@@ -1,13 +1,12 @@
 "use client";
 
-import { env } from "@/env";
 import { useToast } from "@/hooks/use-toast";
 import usePremiumModal from "@/hooks/usePremiumModal";
 import { Check } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
-import { createCheckoutSession } from "./actions";
+import PremiumCheckout from "./PremiumCheckout";
 
 const premiumFeatures = ["AI tools", "Up to 3 resumes"];
 const premiumPlusFeatures = ["Infinite resumes", "Design customizations"];
@@ -18,22 +17,16 @@ export default function PremiumModal() {
   const { toast } = useToast();
 
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
 
-  async function handlePremiumClick(priceId: string) {
-    try {
-      setLoading(true);
-      const redirectUrl = await createCheckoutSession(priceId);
-      window.location.href = redirectUrl;
-    } catch (error) {
-      console.error(error);
-      toast({
-        variant: "destructive",
-        description: "Something went wrong. Please try again.",
-      });
-    } finally {
-      setLoading(false);
-    }
-  }
+  const handleSuccess = () => {
+    setSuccess(true);
+    setLoading(false);
+  };
+
+  const handleError = () => {
+    setLoading(false);
+  };
 
   return (
     <Dialog
@@ -62,15 +55,12 @@ export default function PremiumModal() {
                 ))}
               </ul>
               <Button
-                onClick={() =>
-                  handlePremiumClick(
-                    env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_MONTHLY,
-                  )
-                }
                 disabled={loading}
+                onClick={() => setLoading(true)}
               >
                 Get Premium
               </Button>
+              {loading && <PremiumCheckout planId={3} onSuccess={handleSuccess} onError={handleError} />}
             </div>
             <div className="mx-6 border-l" />
             <div className="flex w-1/2 flex-col space-y-5">
@@ -87,15 +77,12 @@ export default function PremiumModal() {
               </ul>
               <Button
                 variant="premium"
-                onClick={() =>
-                  handlePremiumClick(
-                    env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_PLUS_MONTHLY,
-                  )
-                }
                 disabled={loading}
+                onClick={() => setLoading(true)}
               >
                 Get Premium Plus
               </Button>
+              {loading && <PremiumCheckout planId={2} onSuccess={handleSuccess} onError={handleError} />}
             </div>
           </div>
         </div>
