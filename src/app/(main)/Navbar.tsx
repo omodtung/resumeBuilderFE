@@ -166,7 +166,7 @@ export default function Navbar() {
           {isLoggedIn ? (
             <UserMenu username={username}/>
           ) : (
-            <LoginModal />
+            <LoginModal initialIsLogin={true} />
           )}
         </div>
       </div>

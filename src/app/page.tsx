@@ -1,3 +1,14 @@
-export default function Home() {
-  return <main>Front page</main>;
+"use client";
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+
+export default function Page() {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.push('/landingpage');
+  }, [router]);
+
+  return null;
 }

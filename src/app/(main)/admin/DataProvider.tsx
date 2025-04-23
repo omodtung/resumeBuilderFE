@@ -10,11 +10,15 @@ export const dataProvider: DataProvider = {
         let sort = params.sort?.field ?? '';
         let order = params.sort?.order ?? 'ASC';
         let filter = params.filter ?? '';
-
+        sort = sort === 'id' ? '' : sort; //bypass sort id error
+        
 
          if (params.filter && Object.keys(params.filter).length === 0 && params.filter.constructor === Object) {
             filter = '';
-        } else if (params.filter) {
+        } if (typeof params.filter === 'object') {
+            params.filter = JSON.stringify(params.filter);
+        }
+        if (params.filter) {
             if (typeof params.filter === 'string') {
                 try {
                     // Decode the URL-encoded string
@@ -35,8 +39,16 @@ export const dataProvider: DataProvider = {
                 }
             }
         }
-        
-        let apiUrl = `${API_URL}/${resource === 'user_subscriptions' ? 'user-subscription' : resource}${resource === 'users' ? '-pagi' : ''}?page=${page}&limit=${perPage}&filter=${filter}&sort=${sort}&order=${order}`;
+
+        let apiUrl = `${API_URL}/${
+          resource === 'plans'
+            ? 'plans-filter'
+            : resource === 'user_subscriptions'
+            ? 'user-subscription'
+            : resource === 'users'
+            ? 'users-pagi'
+            : resource
+        }?page=${page}&limit=${perPage}&filter=${filter}&sort=${sort}&order=${order}`;
 
         const response = await fetch(apiUrl).then(res => res.json());
         console.log(apiUrl);

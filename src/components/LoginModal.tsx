@@ -15,9 +15,13 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 
-export default function LoginModal() {
+interface LoginModalProps {
+  initialIsLogin: boolean;
+}
+
+export default function LoginModal({ initialIsLogin }: LoginModalProps) {
   const [open, setOpen] = useState(false);
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = useState(initialIsLogin);
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -111,6 +115,9 @@ export default function LoginModal() {
             </div>
           </div>
           <Button type="submit">{isLogin ? "Login" : "Sign Up"}</Button>
+          <Button type="button" variant="link" onClick={() => setIsLogin(!isLogin)}>
+            {isLogin ? "Don't have an account? Sign up" : "Already have an account? Login"}
+          </Button>
         </form>
       </DialogContent>
     </Dialog>

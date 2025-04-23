@@ -24,7 +24,7 @@ export const ResumeList = () => (
             <TextField source="country" />
             <TextField source="phone" />
             <EmailField source="email" />
-            <BooleanField source="enabled" />
+            {/* <BooleanField source="enabled" /> */}
             <DateField source="createdAt" />
             <DateField source="updatedAt" />
             <EditButton />
