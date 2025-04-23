@@ -43,6 +43,7 @@ export default function LoginModal() {
       if (response.ok) {
         if (isLogin) {
           sessionStorage.setItem('token', data.access_token);
+          sessionStorage.setItem('userId', data.userId);
           toast({
             title: "Login successful",
           })

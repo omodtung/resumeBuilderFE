@@ -9,32 +9,58 @@ export const dataProvider: DataProvider = {
         const perPage = params.pagination?.perPage ?? 10;
         let sort = params.sort?.field ?? '';
         let order = params.sort?.order ?? 'ASC';
-        // console.log(sort);
+        let filter = params.filter ?? '';
 
-        let apiUrl = `${API_URL}/${resource === 'user_subscriptions' ? 'users-pagi' : resource}${resource === 'users' ? '-pagi' : ''}?page=${page}&limit=${perPage}&order=${order}`;
+
+         if (params.filter && Object.keys(params.filter).length === 0 && params.filter.constructor === Object) {
+            filter = '';
+        } else if (params.filter) {
+            if (typeof params.filter === 'string') {
+                try {
+                    // Decode the URL-encoded string
+                    const decodedFilter = decodeURIComponent(params.filter);
+
+                    // Parse the decoded string as a JSON object
+                    const filterObject = JSON.parse(decodedFilter);
+
+                    // Extract values from the object and append them to the API URL
+                    Object.entries(filterObject).forEach(([key, value]) => {
+                        sort = key;
+                        filter = value;
+                        console.log(`Filter key: ${key}, Filter value: ${value}`);
+                    });
+                } catch (error) {
+                    console.error("Error parsing filter:", error);
+                    // Handle the error appropriately, e.g., by ignoring the filter
+                }
+            }
+        }
+        
+        let apiUrl = `${API_URL}/${resource === 'user_subscriptions' ? 'user-subscription' : resource}${resource === 'users' ? '-pagi' : ''}?page=${page}&limit=${perPage}&filter=${filter}&sort=${sort}&order=${order}`;
 
         const response = await fetch(apiUrl).then(res => res.json());
+        console.log(apiUrl);
         console.log(response);
 
-        let data;
-        let total;
+        // let data;
+        // let total;
 
-         if (resource === 'plans' || resource === 'resumes') {
-            data = response;
-            total = Array.isArray(response) ? response.length : 0;
-        }
-        else if (resource === 'user_subscriptions') {
-            data = response.user.flatMap(user => user.userSubscriptions);
-            total = data.length;
-        } else {
-            data = response[resource];
-            total = Array.isArray(data) ? data.length : 1;
-        }
+        //  if (resource === 'plans' || resource === 'resumes') {
+        //     data = response;
+        //     total = Array.isArray(response) ? response.length : 0;
+        // }
+        // else if (resource === 'user_subscriptions') {
+        //     data = response.user.flatMap(user => user.userSubscriptions);
+        //     total = data.length;
+        // } else {
+        //     data = response[resource];
+        //     total = Array.isArray(data) ? data.length : 1;
+        // }
 
         return {
-            data: data,
+            data: response.data,
             // total: parseInt(response.headers.get('X-Total-Count') || '0', 10),
-            total: total,
+            total: response.totalItems,
         };
     },
     getOne: async (resource, params) => {

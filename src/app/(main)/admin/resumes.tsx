@@ -1,7 +1,18 @@
-import { List, Datagrid, TextField, EmailField, DateField, BooleanField, EditButton, DeleteButton } from 'react-admin';
+import { List, Datagrid, TextField, EmailField, DateField, BooleanField, EditButton, DeleteButton, SearchInput, TextInput } from 'react-admin';
+
+const resumeFilters = [
+    <SearchInput source="q" alwaysOn />,
+    <TextInput source="title" defaultValue="" />,
+    <TextInput source="firstName" defaultValue="" />,
+    <TextInput source="lastName" defaultValue="" />,
+    <TextInput source="jobTitle" defaultValue="" />,
+    <TextInput source="city" defaultValue="" />,
+    <TextInput source="country" defaultValue="" />,
+    <TextInput source="email" defaultValue="" />,
+];
 
 export const ResumeList = () => (
-    <List>
+    <List filters={resumeFilters}>
         <Datagrid rowClick={false}>
             <TextField source="id" />
             <TextField source="title" />

@@ -50,10 +50,10 @@ function UserMenu({username}: {username: string}) {
               Billing
             
           </Link>
-          <Link href="#" onClick={() => setAccountSettingsOpen(true)} className="flex items-center px-4 py-2 text-sm text-gray-700 border rounded-md hover:border-blue-500 bg-white hover:bg-gray-100">
+          <button onClick={() => setAccountSettingsOpen(true)} className="flex items-center px-4 py-2 text-sm text-gray-700 border rounded-md hover:border-blue-500 bg-white hover:bg-gray-100 w-full">
             Account Settings
-          </Link>
-          <div className="mt-1" />
+          </button>
+          {/* <div className="mt-1" /> */}
           <button
             onClick={() => {
               sessionStorage.removeItem('token');

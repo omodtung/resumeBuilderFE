@@ -28,11 +28,10 @@ export function useAuth() {
 
     if (storedToken) {
       try {
-        const decoded = jwtDecode<JwtPayload>(storedToken);
-        const userIdDecoded = decoded.sub || null;
-        setUserId(userIdDecoded);
-        if (userIdDecoded) {
-          fetchUserData(userIdDecoded, storedToken);
+        const userIdS = sessionStorage.getItem('userId');
+        setUserId(userIdS);
+        if (userIdS) {
+          fetchUserData(userIdS, storedToken);
         }
       } catch (error) {
         console.error("Invalid token", error);

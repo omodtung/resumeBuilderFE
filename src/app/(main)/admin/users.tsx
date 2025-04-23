@@ -1,15 +1,23 @@
-import { List, Datagrid, TextField, EmailField, DateField, EditButton, DeleteButton } from 'react-admin';
+import { List, Datagrid, TextField, EmailField, DateField, EditButton, DeleteButton, SortButton, SearchInput, TextInput } from 'react-admin';
+
+const userFilters = [
+    <SearchInput source="q" alwaysOn />,
+    <TextInput source="username" defaultValue="" />,
+    <TextInput source="email" defaultValue="" />,
+    <TextInput source="phone" defaultValue="" />,
+    <TextInput source="role" defaultValue="" />,
+];
 
 export const UserList = () => (
-    <List>
+    <List filters={userFilters}>
         <Datagrid rowClick={false}>
-            <TextField source="id" />
-            <TextField source="username" />
-            <TextField source="role" />
-            <EmailField source="email" />
-            <TextField source="phone" />
-            <DateField source="created_at" />
-            <TextField source="user_subscription_id" />
+            <TextField source="id" sortable />
+            <TextField source="username" sortable />
+            <TextField source="role" sortable />
+            <EmailField source="email" sortable />
+            <TextField source="phone" sortable />
+            <DateField source="created_at" sortable />
+            <TextField source="user_subscription_id" sortable />
             <EditButton />
             <DeleteButton />
         </Datagrid>
