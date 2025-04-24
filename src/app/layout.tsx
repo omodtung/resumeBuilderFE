@@ -1,6 +1,7 @@
 
 import { Toaster } from "@/components/ui/toaster";
 import PremiumModal from "@/components/premium/PremiumModal";
+import { LoginModalProvider } from "@/context/LoginModalContext";
 
 import type { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
@@ -33,9 +34,11 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            {children}
-            <Toaster />
-            <PremiumModal />
+            <LoginModalProvider>
+              {children}
+              <Toaster />
+              <PremiumModal />
+            </LoginModalProvider>
           </ThemeProvider>
         </body>
       </html>

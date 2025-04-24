@@ -10,7 +10,7 @@ export default function LandingPage() {
   useEffect(() => {
     const token = sessionStorage.getItem('token');
     if (token) {
-      router.push('/(main)/resumes');
+      router.push('/resumes');
     }
   }, [router]);
 

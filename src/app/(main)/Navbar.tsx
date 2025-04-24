@@ -10,11 +10,12 @@ import { CreditCard } from "lucide-react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import LoginModal from "@/components/LoginModal";
 import AccountSettingsDialog from "@/components/AccountSettingsDialog";
+import { useLoginModal } from "@/context/LoginModalContext";
 
-function UserMenu({username}: {username: string}) {
+function UserMenu({ username }: { username: string }) {
   const [open, setOpen] = useState(false);
   const [accountSettingsOpen, setAccountSettingsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -74,49 +75,57 @@ export default function Navbar() {
   const { theme } = useTheme();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState("");
+  const { setIsLoginModalOpen } = useLoginModal();
 
   useEffect(() => {
     async function checkToken() {
       try {
-        const token = sessionStorage.getItem('token'); // Retrieve token from sessionStorage
+        const token = sessionStorage.getItem("token"); // Retrieve token from sessionStorage
         console.log(token);
         if (token) {
           try {
-            const decoded = jwtDecode<{ sub: string, username: string, exp: number }>(token);
+            const decoded = jwtDecode<{
+              sub: string;
+              username: string;
+              exp: number;
+            }>(token);
             if (decoded && decoded.exp) {
               const isExpired = decoded.exp * 1000 < Date.now();
 
               if (isExpired) {
                 // Refresh the token
                 try {
-                  const token = sessionStorage.getItem('token');
-                  const response = await fetch('/auth-controller/refreshToken', {
-                    method: 'POST',
+                  const token = sessionStorage.getItem("token");
+                  const response = await fetch("/auth-controller/refreshToken", {
+                    method: "POST",
                     headers: {
-                      'Content-Type': 'application/json',
-                      'Authorization': `Bearer ${token}`,
+                      "Content-Type": "application/json",
+                      Authorization: `Bearer ${token}`,
                     },
                   });
 
                   if (response.ok) {
                     const data = await response.json();
                     const newToken = data.accessToken; // Assuming the response contains a new token
-                    sessionStorage.setItem('token', newToken); // Store the new token
-                    const newDecoded = jwtDecode<{ sub: string, username: string }>(newToken);
+                    sessionStorage.setItem("token", newToken); // Store the new token
+                    const newDecoded = jwtDecode<{
+                      sub: string;
+                      username: string;
+                    }>(newToken);
                     setIsLoggedIn(true);
                     setUsername(newDecoded.sub || "username");
                   } else {
                     console.error("Failed to refresh token", response.status);
                     setIsLoggedIn(false);
                     setUsername("");
-                    sessionStorage.removeItem('token');
+                    sessionStorage.removeItem("token");
                     window.location.reload();
                   }
                 } catch (refreshError) {
                   console.error("Error refreshing token", refreshError);
                   setIsLoggedIn(false);
                   setUsername("");
-                  sessionStorage.removeItem('token');
+                  sessionStorage.removeItem("token");
                   window.location.reload();
                 }
               } else {
@@ -164,9 +173,9 @@ export default function Navbar() {
         <div className="flex items-center gap-3">
           <ThemeToggle />
           {isLoggedIn ? (
-            <UserMenu username={username}/>
+            <UserMenu username={username} />
           ) : (
-            <LoginModal initialIsLogin={true} />
+            <LoginModal initialIsLogin={true}  />
           )}
         </div>
       </div>

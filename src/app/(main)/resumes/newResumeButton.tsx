@@ -1,13 +1,16 @@
-//// filepath: /c:/Users/LE HOANG/source/resumeBuilderFE/src/components/NewResumeButton.tsx
 "use client";
 
 import { Button } from "@/components/ui/button";
 import { PlusSquare } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth";
+import { useLoginModal } from "@/context/LoginModalContext";
+import  LoginModal  from "@/components/LoginModal";
+import React from "react";
 
 export default function NewResumeButton() {
   const { token } = useAuth();
+  const { setIsLoginModalOpen } = useLoginModal();
 
   const createResume = async (token: string | null) => {
     try {
@@ -33,6 +36,10 @@ export default function NewResumeButton() {
   };
 
   const handleNewResumeClick = async () => {
+    if (!token) {
+      setIsLoginModalOpen(true);
+      return;
+    }
     const resumeId = await createResume(token);
     if (resumeId) {
       window.location.href = `/editor?resumeId=${resumeId}`;
