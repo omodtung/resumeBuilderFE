@@ -32,7 +32,7 @@ export default function useAutoSaveResume(resumeData: ResumeValues) {
 
         const newData = structuredClone(debouncedResumeData);
 
-        console.log(newData);
+        console.log(resumeData);
         // Make a POST request to the backend API
         const response = await fetch(`http://localhost:8080/admin/resumes/${resumeId || ""}`, {
           method: "PATCH",

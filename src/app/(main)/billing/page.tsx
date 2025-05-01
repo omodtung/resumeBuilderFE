@@ -23,7 +23,7 @@ interface Props {
   token: string;
 }
 
-export default async function Page() {
+export default function Page() {
   const { userId, token } = useAuth();
   
   if (!userId) {
@@ -41,27 +41,30 @@ const BillingPage: React.FC<Props> = ({ userId, token }) => {
   const [priceInfo, setPriceInfo] = useState<PriceInfo | null>(null);
 
   useEffect(() => {
-    async function fetchUserData(userId: string, token: string) {
-      const res = await fetch(`http://localhost:8080/admin/users/${userId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      let priceInfo: PriceInfo | null = null;
-      if (res.ok) {
-        const userData = await res.json();
-        if (userData.subscription) {
-          priceInfo = {
-            product: {
-              name: userData.subscription.plan,
-            },
-          };
+
+    if (!priceInfo) {
+      async function fetchUserData(userId: string, token: string) {
+        const res = await fetch(`http://localhost:8080/admin/users/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        let priceInfo: PriceInfo | null = null;
+        if (res.ok) {
+          const userData = await res.json();
+          if (userData.subscription) {
+            priceInfo = {
+              product: {
+                name: userData.subscription.plan,
+              },
+            };
+          }
         }
+        setPriceInfo(priceInfo);
       }
-      setPriceInfo(priceInfo);
+      fetchUserData(userId, token);
     }
-    fetchUserData(userId, token);
-  }, [userId, token]);
+  }, [userId, token, priceInfo]);
 
   return (
     <main className="mx-auto w-full max-w-7xl space-y-6 px-3 py-6">

@@ -14,9 +14,7 @@ export default function Page() {
   const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setToken(sessionStorage.getItem('token'));
-    }
+    setToken(sessionStorage.getItem('token'));
   }, []);
 
   useEffect(() => {

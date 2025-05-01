@@ -5,7 +5,7 @@ import { ResumeValues } from "@/lib/validation";
 import { formatDate } from "date-fns";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { Badge } from "./ui/badge";
+import { Badge } from "@/components/ui/badge";
 
 interface ResumePreviewProps {
   resumeData: ResumeValues;
@@ -16,7 +16,6 @@ interface ResumePreviewProps {
 export default function ResumePreview({
   resumeData,
   className,
-  contentRef, // Destructure contentRef
 }: ResumePreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -31,7 +30,6 @@ export default function ResumePreview({
       ref={containerRef}
     >
       <div
-        ref={contentRef} // Attach contentRef here
         className={cn("space-y-6 p-6", !width && "invisible")}
         style={{
           zoom: (1 / 794) * width,
@@ -40,8 +38,8 @@ export default function ResumePreview({
         {/* <pre>{JSON.stringify(resumeData, null, 2)}</pre> */}
         <PersonalInfoHeader resumeData={resumeData} />
         <SummarySection resumeData={resumeData} />
-        <WorkExperienceSection resumeData={resumeData} />
         <EducationSection resumeData={resumeData} />
+        <WorkExperienceSection resumeData={resumeData} />
         <SkillsSection resumeData={resumeData} />
       </div>
     </div>
@@ -66,18 +64,13 @@ function PersonalInfoHeader({ resumeData }: ResumeSectionProps) {
     borderStyle,
   } = resumeData;
 
-  const [photoSrc, setPhotoSrc] = useState(photo instanceof File ? "" : (typeof photo === 'string' && photo ? "http://localhost:8080/images/avatar/" + photo : photo));
+  const [photoSrc, setPhotoSrc] = useState(photo instanceof File ? "" : photo);
 
   useEffect(() => {
-    if (photo instanceof File) {
-      const objectUrl = URL.createObjectURL(photo);
-      setPhotoSrc(objectUrl);
-      return () => URL.revokeObjectURL(objectUrl);
-    } else if (typeof photo === 'string' && photo) {
-      setPhotoSrc("http://localhost:8080/images/avatar/" + photo);
-    } else {
-      setPhotoSrc("");
-    }
+    const objectUrl = photo instanceof File ? URL.createObjectURL(photo) : "";
+    if (objectUrl) setPhotoSrc(objectUrl);
+    if (photo === null) setPhotoSrc("");
+    return () => URL.revokeObjectURL(objectUrl);
   }, [photo]);
 
   return (
@@ -160,6 +153,7 @@ function SummarySection({ resumeData }: ResumeSectionProps) {
 
 function WorkExperienceSection({ resumeData }: ResumeSectionProps) {
   const { workExperiences, colorHex } = resumeData;
+  //console.log(workExperiences);
 
   const workExperiencesNotEmpty = workExperiences?.filter(
     (exp) => Object.values(exp).filter(Boolean).length > 0,

@@ -3,7 +3,26 @@
 @tailwind utilities;
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  @apply font-sans;
+}
+
+@layer components {
+  .animate-gradient {
+    animation: gradient 10s ease infinite;
+    background-size: 200% 200%;
+  }
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 @layer base {
@@ -69,4 +88,20 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@media print {
+  #resumePreviewContent {
+    zoom: 3 !important;
+    padding: 0;
+  }
+}
+
+#resumePreviewContent {
+  font-family: Inter;
+}
+
+@page {
+  size: A4;
+  margin: 0.6cm;
 }

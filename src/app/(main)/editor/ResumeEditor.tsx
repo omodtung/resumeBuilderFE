@@ -4,13 +4,17 @@ import useUnloadWarning from "@/hooks/useUnloadWarning";
 import { cn, mapToResumeValues } from "@/lib/utils";
 import { ResumeValues } from "@/lib/validation";
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Breadcrumbs from "./Breadcrumbs";
 import Footer from "./Footer";
 import ResumePreviewSection from "./ResumePreviewSection";
 import { steps } from "./steps";
 import useAutoSaveResume from "./useAutoSaveResume";
 import { ResumeServerData } from "@/lib/types";
+import jsPDF from "jspdf";
+// Remove static import: import html2pdf from 'html2pdf.js';
+import dynamic from 'next/dynamic'; // Import next/dynamic
+import { generateResumePdf } from '@/lib/pdfGenerator';
 
 interface ResumeEditorProps {
   resumeToEdit: ResumeServerData | null;
@@ -18,10 +22,16 @@ interface ResumeEditorProps {
 
 export default function ResumeEditor({ resumeToEdit }: ResumeEditorProps) {
   const searchParams = useSearchParams();
+  const resumePreviewRef = useRef<HTMLDivElement>(null); // Keep this ref for the section if needed elsewhere
+  const resumeContentRef = useRef<HTMLDivElement>(null); // Add ref for the inner content
 
   const [resumeData, setResumeData] = useState<ResumeValues>(
     resumeToEdit ? mapToResumeValues(resumeToEdit) : {},
   );
+
+  const handleExportPdf = () => {
+    generateResumePdf(resumeData);
+  };
 
   const [showSmResumePreview, setShowSmResumePreview] = useState(false);
 
@@ -44,11 +54,16 @@ export default function ResumeEditor({ resumeToEdit }: ResumeEditorProps) {
   return (
     <div className="flex grow flex-col">
       <header className="space-y-1.5 border-b px-3 py-5 text-center">
-        <h1 className="text-2xl font-bold">Design your resume</h1>
-        <p className="text-sm text-muted-foreground">
-          Follow the steps below to create your resume. Your progress will be
-          saved automatically.
-        </p>
+        <div className="flex justify-center items-center">
+          <div>
+            <h1 className="text-2xl font-bold">Design your resume</h1>
+            <p className="text-sm text-muted-foreground">
+              Follow the steps below to create your resume. Your progress will be
+              saved automatically.
+            </p>
+          </div>
+        </div>
+        {/* <button onClick={handleExportPdf} className="ml-auto block">Export to PDF</button> */}
       </header>
       <main className="relative grow">
         <div className="absolute bottom-0 top-0 flex w-full">
@@ -68,6 +83,8 @@ export default function ResumeEditor({ resumeToEdit }: ResumeEditorProps) {
           </div>
           <div className="grow md:border-r" />
           <ResumePreviewSection
+            ref={resumePreviewRef} // Keep ref for the section if needed
+            contentRef={resumeContentRef} // Pass the new content ref down
             resumeData={resumeData}
             setResumeData={setResumeData}
             className={cn(showSmResumePreview && "flex")}

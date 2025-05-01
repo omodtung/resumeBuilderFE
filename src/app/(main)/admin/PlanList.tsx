@@ -1,7 +1,6 @@
-import { List, Datagrid, TextField, DateField, EditButton, DeleteButton, SearchInput, TextInput } from 'react-admin';
+import { List, Datagrid, TextField, DateField, EditButton, DeleteButton, TextInput } from 'react-admin';
 
 const planFilters = [
-    <SearchInput source="q" alwaysOn />,
     <TextInput source="stripePriceId" defaultValue="" />,
     <TextInput source="plansName" defaultValue="" />,
     <TextInput source="price" defaultValue="" />,

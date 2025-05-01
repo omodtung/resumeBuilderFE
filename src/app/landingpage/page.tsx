@@ -15,7 +15,7 @@ export default function LandingPage() {
   }, [router]);
 
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex justify-center items-center h-screen bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-border animate-gradient">
       <LoginModal initialIsLogin={true}/>
     </div>
   );

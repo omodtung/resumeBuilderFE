@@ -18,7 +18,12 @@ import { useLoginModal } from "@/context/LoginModalContext";
 function UserMenu({ username }: { username: string }) {
   const [open, setOpen] = useState(false);
   const [accountSettingsOpen, setAccountSettingsOpen] = useState(false);
+  const [hasMounted, setHasMounted] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -58,7 +63,7 @@ function UserMenu({ username }: { username: string }) {
           <button
             onClick={() => {
               sessionStorage.removeItem('token');
-              window.location.reload();
+              window.location.href = '/landingpage';
             }}
             className="flex items-center px-4 py-2 text-sm text-gray-700 border rounded-md hover:border-blue-500 bg-white hover:bg-gray-100 w-full"
           >
@@ -66,16 +71,22 @@ function UserMenu({ username }: { username: string }) {
           </button>
         </div>
       )}
-      <AccountSettingsDialog open={accountSettingsOpen} setOpen={setAccountSettingsOpen} username={username}/>
+      {hasMounted && <AccountSettingsDialog open={accountSettingsOpen} setOpen={setAccountSettingsOpen} username={username}/>}
     </div>
   );
 }
 
 export default function Navbar() {
-  const { theme } = useTheme();
+  // const { theme } = useTheme();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState("");
   const { setIsLoginModalOpen } = useLoginModal();
+  const [isLoading, setIsLoading] = useState(true); // Add a loading state
+  const [hasMounted, setHasMounted] = useState(false); // Add hasMounted state
+
+  useEffect(() => {
+    setHasMounted(true); // Set hasMounted to true after component mounts
+  }, []);
 
   useEffect(() => {
     async function checkToken() {
@@ -149,6 +160,8 @@ export default function Navbar() {
         console.error("Error fetching token", error);
         setIsLoggedIn(false);
         setUsername("");
+      } finally {
+        setIsLoading(false); // Set loading to false after the check is complete
       }
     }
 
@@ -171,11 +184,15 @@ export default function Navbar() {
           </span>
         </Link>
         <div className="flex items-center gap-3">
-          <ThemeToggle />
-          {isLoggedIn ? (
-            <UserMenu username={username} />
-          ) : (
-            <LoginModal initialIsLogin={true}  />
+          {hasMounted && <ThemeToggle />} {/* Only render ThemeToggle if mounted */}
+          {hasMounted && ( // Only render UserMenu or LoginModal if mounted
+            isLoading ? ( // Conditionally render based on loading state
+              <div>Loading...</div> // Or any other loading indicator
+            ) : isLoggedIn ? (
+              <UserMenu username={username} />
+            ) : (
+              <LoginModal initialIsLogin={true}  />
+            )
           )}
         </div>
       </div>
