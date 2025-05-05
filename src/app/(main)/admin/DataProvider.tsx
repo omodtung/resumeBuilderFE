@@ -47,6 +47,8 @@ export const dataProvider: DataProvider = {
             ? 'user-subscription'
             : resource === 'users'
             ? 'users-pagi'
+            : resource === 'resumes'
+            ? 'resumes-filter'
             : resource
         }?page=${page}&limit=${perPage}&filter=${filter}&sort=${sort}&order=${order}`;
 
