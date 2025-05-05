@@ -183,7 +183,7 @@ export default function Navbar() {
             AI Resume Builder
           </span>
         </Link>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3" suppressHydrationWarning={true}>
           {hasMounted && <ThemeToggle />} {/* Only render ThemeToggle if mounted */}
           {hasMounted && ( // Only render UserMenu or LoginModal if mounted
             isLoading ? ( // Conditionally render based on loading state

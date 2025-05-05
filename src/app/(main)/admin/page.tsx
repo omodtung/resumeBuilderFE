@@ -1,6 +1,6 @@
 "use client";
 
-
+import { useRouter } from 'next/navigation';
 import { Admin, Resource } from 'react-admin';
 import { UserList } from './users';
 import UserEdit from './edits/userEdit';
@@ -18,20 +18,34 @@ import { dataProvider } from './DataProvider';
 
 function AdminPage() {
   const [isClient, setIsClient] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     setIsClient(true);
   }, []);
 
+  const handleLogout = () => {
+    sessionStorage.clear();
+    router.push('/landingpage');
+  };
+
   return (
     <>
       {isClient ? (
-        <Admin dataProvider={dataProvider}>
-          <Resource name="users" list={UserList} edit={UserEdit} create={UserCreate}  />
-          <Resource name="user_subscriptions" list={UserSubscriptionList} edit={UserSubscriptionEdit} />
-          <Resource name="resumes" list={ResumeList} edit={ResumeEdit} create={ResumeCreate} />
-          <Resource name="plans" list={PlanList} edit={PlanEdit} create={PlanCreate} />
-        </Admin>
+        <div className="relative">
+          <button
+            onClick={handleLogout}
+            className="absolute top-2 right-2 z-10 px-4 py-2 bg-red-500 text-white rounded cursor-pointer"
+          >
+            Logout
+          </button>
+          <Admin dataProvider={dataProvider}>
+            <Resource name="users" list={UserList} edit={UserEdit} create={UserCreate}  />
+            <Resource name="user_subscriptions" list={UserSubscriptionList} edit={UserSubscriptionEdit} />
+            <Resource name="resumes" list={ResumeList} edit={ResumeEdit} create={ResumeCreate} />
+            <Resource name="plans" list={PlanList} edit={PlanEdit} create={PlanCreate} />
+          </Admin>
+        </div>
       ) : null}
     </>
   );

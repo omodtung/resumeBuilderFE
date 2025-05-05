@@ -47,6 +47,8 @@ export const dataProvider: DataProvider = {
             ? 'user-subscription'
             : resource === 'users'
             ? 'users-pagi'
+            : resource === 'resumes'
+            ? 'resumes-filter'
             : resource
         }?page=${page}&limit=${perPage}&filter=${filter}&sort=${sort}&order=${order}`;
 
@@ -84,7 +86,15 @@ export const dataProvider: DataProvider = {
         };
     },
     getOne: async (resource, params) => {
-        const response = await fetch(`${API_URL}/${resource}/${params.id}`).then(res => res.json());
+        // Get token from session storage
+        const token = sessionStorage.getItem('token');
+
+        const response = await fetch(`${API_URL}/${resource}/${params.id}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        }).then(res => res.json());
         const keys = Object.keys(response);
         const key = keys[0];
         let data = response[key];
@@ -96,23 +106,40 @@ export const dataProvider: DataProvider = {
         return {data: data};
     },
     getMany: async (resource, params) => {
-        const response = await fetch(`${API_URL}/${resource}`).then(res => res.json());
+        // Get token from session storage
+        const token = sessionStorage.getItem('token');
+        const response = await fetch(`${API_URL}/${resource}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        }).then(res => res.json());
         return {
             data: response.filter((item: any) => params.ids.includes(item.id)),
             total: response.length,
         };
     },
     getManyReference: async (resource, params) => {
-        const response = await fetch(`${API_URL}/${resource}`).then(res => res.json());
+        // Get token from session storage
+        const token = sessionStorage.getItem('token');
+        const response = await fetch(`${API_URL}/${resource}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        }).then(res => res.json());
         return {
             data: response.filter((item: any) => params.target === item.id),
             total: response.length,
         };
     },
     create: async (resource, params) => {
+        // Get token from session storage
+        const token = sessionStorage.getItem('token');
         const response = await fetch(`${API_URL}/${resource}`, {
             method: 'POST',
             headers: {
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(params.data),
@@ -124,9 +151,12 @@ export const dataProvider: DataProvider = {
         return {data: data};
     },
     update: async (resource, params) => {
+        // Get token from session storage
+        const token = sessionStorage.getItem('token');
         const response = await fetch(`${API_URL}/${resource}/${params.id}`, {
             method: 'PUT',
             headers: {
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(params.data),
@@ -138,9 +168,12 @@ export const dataProvider: DataProvider = {
         return {data: data};
     },
     updateMany: async (resource, params) => {
+        // Get token from session storage
+        const token = sessionStorage.getItem('token');
         const response = await fetch(`${API_URL}/${resource}`, {
             method: 'PUT',
             headers: {
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(params.data),
@@ -148,15 +181,24 @@ export const dataProvider: DataProvider = {
         return {data: response};
     },
     delete: async (resource, params) => {
+        // Get token from session storage
+        const token = sessionStorage.getItem('token');
         const response = await fetch(`${API_URL}/${resource}/${params.id}`, {
             method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
         }).then(res => res.json());
         return {data: response};
     },
    deleteMany: async (resource, params) => {
+    // Get token from session storage
+    const token = sessionStorage.getItem('token');
     const response = await fetch(`${API_URL}/${resource}`, {
       method: 'DELETE',
       headers: {
+        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ ids: params.ids }),
