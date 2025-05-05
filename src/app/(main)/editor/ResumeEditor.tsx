@@ -10,7 +10,7 @@ import Footer from "./Footer";
 import ResumePreviewSection from "./ResumePreviewSection";
 import { steps } from "./steps";
 import useAutoSaveResume from "./useAutoSaveResume";
-import { ResumeServerData } from "@/lib/types";
+import { ResumeServerData, EditorFormProps } from "@/lib/types"; // Import EditorFormProps
 import jsPDF from "jspdf";
 // Remove static import: import html2pdf from 'html2pdf.js';
 import dynamic from 'next/dynamic'; // Import next/dynamic
@@ -18,9 +18,10 @@ import { generateResumePdf } from '@/lib/pdfGenerator';
 
 interface ResumeEditorProps {
   resumeToEdit: ResumeServerData | null;
+  refetchResume: () => Promise<void>;
 }
 
-export default function ResumeEditor({ resumeToEdit }: ResumeEditorProps) {
+export default function ResumeEditor({ resumeToEdit, refetchResume }: ResumeEditorProps) {
   const searchParams = useSearchParams();
   const resumePreviewRef = useRef<HTMLDivElement>(null); // Keep this ref for the section if needed elsewhere
   const resumeContentRef = useRef<HTMLDivElement>(null); // Add ref for the inner content
@@ -78,6 +79,7 @@ export default function ResumeEditor({ resumeToEdit }: ResumeEditorProps) {
               <FormComponent
                 resumeData={resumeData}
                 setResumeData={setResumeData}
+                refetchResume={refetchResume} // Pass refetchResume down
               />
             )}
           </div>

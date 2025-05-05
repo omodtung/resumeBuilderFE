@@ -6,16 +6,14 @@ import NewResumeButton from "./newResumeButton";
 import ResumeItem from "./ResumeItem";
 import { ResumeServerData } from "@/lib/types";
 import { useState, useEffect } from "react";
+import { useAuth } from "@/lib/auth";
 
 
 
 export default function Page() {
   const [resumes, setResumes] = useState<ResumeServerData[]>([]);
-  const [token, setToken] = useState<string | null>(null);
-
-  useEffect(() => {
-    setToken(sessionStorage.getItem('token'));
-  }, []);
+  // Call useAuth once here
+  const { token } = useAuth();
 
   useEffect(() => {
     async function fetchResumes(token: string | null): Promise<ResumeServerData[]> {
@@ -45,14 +43,15 @@ export default function Page() {
     if (token) {
       fetchResumes(token).then(data => setResumes(data));
     }
-  }, [token]);
+  }, [token]); // Keep token dependency for fetching resumes when token becomes available
 
   return (
     <main className="mx-auto w-full max-w-7xl space-y-6 px-3 py-6">
       <NewResumeButton />
       <div className="flex w-full grid-cols-2 flex-col gap-3 sm:grid md:grid-cols-3 lg:grid-cols-4">
         {resumes.map((resume) => (
-          <ResumeItem key={resume.id} resume={resume} />
+          // Pass token down as a prop
+          <ResumeItem key={resume.id} resume={resume} token={token} />
         ))}
       </div>
     </main>

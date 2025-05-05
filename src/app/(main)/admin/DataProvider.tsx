@@ -50,7 +50,15 @@ export const dataProvider: DataProvider = {
             : resource
         }?page=${page}&limit=${perPage}&filter=${filter}&sort=${sort}&order=${order}`;
 
-        const response = await fetch(apiUrl).then(res => res.json());
+        // Get token from session storage
+        const token = sessionStorage.getItem('token');
+
+        const response = await fetch(apiUrl, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        }).then(res => res.json());
         console.log(apiUrl);
         console.log(response);
 

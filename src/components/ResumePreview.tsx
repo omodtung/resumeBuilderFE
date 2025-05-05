@@ -66,19 +66,15 @@ function PersonalInfoHeader({ resumeData }: ResumeSectionProps) {
     borderStyle,
   } = resumeData;
 
-  const [photoSrc, setPhotoSrc] = useState(photo instanceof File ? "" : (typeof photo === 'string' && photo ? "http://localhost:8080/images/avatar/" + photo : photo));
+  const [photoSrc, setPhotoSrc] = useState(photo instanceof File ? "" : photo);
 
   useEffect(() => {
-    if (photo instanceof File) {
-      const objectUrl = URL.createObjectURL(photo);
-      setPhotoSrc(objectUrl);
-      return () => URL.revokeObjectURL(objectUrl);
-    } else if (typeof photo === 'string' && photo) {
-      setPhotoSrc("http://localhost:8080/images/avatar/" + photo);
-    } else {
-      setPhotoSrc("");
-    }
+    const objectUrl = photo instanceof File ? URL.createObjectURL(photo) : "";
+    if (objectUrl) setPhotoSrc(objectUrl);
+    if (photo === null) setPhotoSrc("");
+    return () => URL.revokeObjectURL(objectUrl);
   }, [photo]);
+  console.log("RESUME DATA:" + resumeData.photo);
 
   return (
     <div className="flex items-center gap-6">

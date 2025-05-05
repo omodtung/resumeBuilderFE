@@ -25,6 +25,7 @@ import {
   WorkExperience,
 } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAuth } from "@/lib/auth"; // Import useAuth
 import { WandSparklesIcon } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -84,6 +85,7 @@ function InputDialog({
   onWorkExperienceGenerated,
 }: InputDialogProps) {
   const { toast } = useToast();
+  const { userId, token } = useAuth(); // Get userId and token
 
   const form = useForm<GenerateWorkExperienceInput>({
     resolver: zodResolver(generateWorkExperienceSchema),
@@ -93,8 +95,16 @@ function InputDialog({
   });
 
   async function onSubmit(input: GenerateWorkExperienceInput) {
+    if (!userId || !token) {
+      toast({
+        variant: "destructive",
+        description: "Authentication error. Please log in again.",
+      });
+      return;
+    }
     try {
-      const response = await generateWorkExperience(input);
+      // Pass userId and token along with form input
+      const response = await generateWorkExperience({ ...input, userId, token });
       onWorkExperienceGenerated(response);
     } catch (error) {
       console.error(error);

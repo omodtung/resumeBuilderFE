@@ -3,6 +3,7 @@ import { ResumeValues } from "./validation";
 export interface EditorFormProps {
   resumeData: ResumeValues;
   setResumeData: (data: ResumeValues) => void;
+  refetchResume: () => Promise<void>;
 }
 
 export interface ResumeServerData {

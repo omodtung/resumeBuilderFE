@@ -57,7 +57,12 @@ const LoginModal = forwardRef<HTMLButtonElement, LoginModalProps>(
               title: "Login successful",
             });
             setIsLoginModalOpen(false);
-            window.location.reload();
+            // Redirect based on role
+            if (data.role === 'ROLE_ADMIN') {
+              router.push('/admin');
+            } else {
+              window.location.reload();
+            }
           } else {
             toast({
               title: "Sign up successful",

@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { jwtDecode, JwtPayload } from "jwt-decode";
 
 export function useAuth() {
+  const router = useRouter();
   const [userId, setUserId] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [userData, setUserData] = useState<any | null>(null);
@@ -39,8 +41,9 @@ export function useAuth() {
       }
     } else {
       console.log("No token found in session storage");
+      router.push('/landingpage');
     }
-  }, []);
+  }, [router]);
 
   return { userId, token, userData };
 }

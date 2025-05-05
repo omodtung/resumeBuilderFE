@@ -20,6 +20,33 @@ export default function Page({ searchParams }: PageProps) {
   const [resumeToEdit, setResumeToEdit] = useState<ResumeServerData | null>(null);
   const [resumeId, setResumeId] = useState<string | null>(null);
 
+  async function fetchResume(resumeId: string, token: string) {
+    const response = await fetch(`http://localhost:8080/admin/resumes/${resumeId}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      cache: "no-store",
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log("Resume data:", data.resume);
+      return data.resume;
+    } else {
+      console.error("Failed to fetch resume");
+    }
+  }
+
+  const refetchResume = async () => {
+    if (token && resumeId) {
+      const fetchedResume = await fetchResume(resumeId, token);
+      if (fetchedResume) {
+        setResumeToEdit(fetchedResume);
+      }
+    }
+  };
+
   useEffect(() => {
     async function resolveSearchParams() {
       try {
@@ -34,24 +61,6 @@ export default function Page({ searchParams }: PageProps) {
   }, [searchParams]);
 
   useEffect(() => {
-    async function fetchResume(resumeId: string, token: string) {
-      const response = await fetch(`http://localhost:8080/admin/resumes/${resumeId}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        cache: "no-store",
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        console.log("Resume data:", data.resume);
-        return data.resume;
-      } else {
-        console.error("Failed to fetch resume");
-      }
-    }
-
     if (token && resumeId) {
       fetchResume(resumeId, token).then(setResumeToEdit);
     }
@@ -63,7 +72,7 @@ export default function Page({ searchParams }: PageProps) {
 
   return (
     <div className="flex grow flex-col">
-      <ResumeEditor resumeToEdit={resumeToEdit} />
+      <ResumeEditor resumeToEdit={resumeToEdit} refetchResume={refetchResume} />
       <button
         className="absolute bottom-8 right-8 bg-blue-500 text-white rounded-full p-2 hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-200"
         onClick={() => setIsChatboxOpen(!isChatboxOpen)}

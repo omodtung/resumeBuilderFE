@@ -32,9 +32,9 @@ export default function useAutoSaveResume(resumeData: ResumeValues) {
 
         const newData = structuredClone(debouncedResumeData);
 
-        console.log(resumeData);
+        console.log("RESUME DATA:"+resumeData.id);
         // Make a POST request to the backend API
-        const response = await fetch(`http://localhost:8080/admin/resumes/${resumeId || ""}`, {
+        const response = await fetch(`http://localhost:8080/admin/resumes/${debouncedResumeData.id || ""}`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
@@ -52,8 +52,8 @@ export default function useAutoSaveResume(resumeData: ResumeValues) {
         setResumeId(updatedResume.id);
         setLastSavedData(newData);
 
-        // Update the URL with the new resume ID if it has changed
-        if (searchParams.get("resumeId") !== updatedResume.id) {
+        // Update the URL with the new resume ID if it has changed and is defined
+        if (updatedResume.id && searchParams.get("resumeId") !== updatedResume.id) {
           const newSearchParams = new URLSearchParams(searchParams);
           newSearchParams.set("resumeId", updatedResume.id);
           window.history.replaceState(
@@ -99,9 +99,12 @@ export default function useAutoSaveResume(resumeData: ResumeValues) {
       JSON.stringify(debouncedResumeData, fileReplacer) !==
       JSON.stringify(lastSavedData, fileReplacer);
 
-    if (hasUnsavedChanges && debouncedResumeData && !isSaving && !isError) {
+    // Only save if there are unsaved changes, data is available, not already saving, no error, and debouncedResumeData has an ID
+    if (hasUnsavedChanges && debouncedResumeData && !isSaving && !isError && debouncedResumeData.id) {
       save(token);
+      console.log("SAVING");
     }
+    console.log("RESUME ID:" + resumeId);
   }, [
     debouncedResumeData,
     isSaving,

@@ -18,6 +18,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 export default function PersonalInfoForm({
   resumeData,
   setResumeData,
+  refetchResume,
 }: EditorFormProps) {
   const [photoUrl, setPhotoUrl] = useState<string | undefined>(
     resumeData.photoUrl,
@@ -66,16 +67,27 @@ export default function PersonalInfoForm({
           idResume: resumeData.id?.toString() || "",
         },
       });
+      console.log(resumeData.id?.toString());
 
       if (!response.ok) {
         throw new Error(`Failed to upload image: ${response.statusText}`);
       }
 
       const data = await response.text();
-      const imageName = data;
-      const imageUrl = `http://localhost:8080/images/avatar/${imageName}`;
-      console.log("Image URL:", imageUrl);
-      setPhotoUrl(imageUrl);
+
+      // Check if the response is "Success" (from CV upload)
+      if (data === "Success") {
+        console.log("CV upload successful, refetching resume data...");
+        await refetchResume();
+        // The photoUrl state will be updated by the useEffect hook watching resumeData.photoUrl
+      } else {
+        // Assume the response is the image name (from photo upload)
+        const imageName = data;
+        const imageUrl = `http://localhost:8080/images/avatar/${imageName}`;
+        console.log("Image URL:", imageUrl);
+        setPhotoUrl(imageUrl);
+      }
+
     } catch (error: any) {
       console.error("Error uploading image:", error);
     }

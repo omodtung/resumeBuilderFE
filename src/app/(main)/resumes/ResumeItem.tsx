@@ -26,15 +26,18 @@ import Link from "next/link";
 import { useRef, useState, useTransition } from "react";
 import { useReactToPrint } from "react-to-print";
 import { deleteResume } from "./actions";
-import { useAuth } from "@/lib/auth";
+// Remove useAuth import from here if no longer needed elsewhere in this file
+// import { useAuth } from "@/lib/auth";
 
 interface ResumeItemProps {
   resume: ResumeServerData;
+  token: string | null; // Add token prop
 }
 
-export default function ResumeItem({ resume }: ResumeItemProps) {
+export default function ResumeItem({ resume, token }: ResumeItemProps) { // Accept token prop
   const contentRef = useRef<HTMLDivElement>(null);
-  const { token } = useAuth();
+  // Remove useAuth call from here
+  // const { token } = useAuth();
 
   const reactToPrintFn = useReactToPrint({
     contentRef,
@@ -73,7 +76,8 @@ export default function ResumeItem({ resume }: ResumeItemProps) {
           <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-white to-transparent" />
         </Link>
       </div>
-      <MoreMenu resumeId={resume.id} onPrintClick={reactToPrintFn} />
+      {/* Pass token down to MoreMenu */}
+      <MoreMenu resumeId={resume.id} onPrintClick={reactToPrintFn} token={token} />
     </div>
   );
 }
@@ -81,9 +85,10 @@ export default function ResumeItem({ resume }: ResumeItemProps) {
 interface MoreMenuProps {
   resumeId: number;
   onPrintClick: () => void;
+  token: string | null; // Add token prop
 }
 
-function MoreMenu({ resumeId, onPrintClick }: MoreMenuProps) {
+function MoreMenu({ resumeId, onPrintClick, token }: MoreMenuProps) { // Accept token prop
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
   return (
@@ -115,35 +120,43 @@ function MoreMenu({ resumeId, onPrintClick }: MoreMenuProps) {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+      {/* Pass token down to DeleteConfirmationDialog */}
       <DeleteConfirmationDialog
         resumeId={resumeId}
         open={showDeleteConfirmation}
         onOpenChange={setShowDeleteConfirmation}
+        token={token}
       />
     </>
   );
 }
 
+import { useAuth } from "@/lib/auth"; // Keep this import if needed for other parts, otherwise remove
+
 interface DeleteConfirmationDialogProps {
   resumeId: number;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  token: string | null; // Add token prop
 }
 
 function DeleteConfirmationDialog({
   resumeId,
   open,
   onOpenChange,
+  token, // Accept token prop
 }: DeleteConfirmationDialogProps) {
   const { toast } = useToast();
-  const { token } = useAuth();
+  // Remove useAuth call from here
+  // const { token } = useAuth();
 
   const [isPending, startTransition] = useTransition();
 
   async function handleDelete() {
     startTransition(async () => {
       try {
-        const { token } = useAuth();
+        // Remove redundant useAuth call, use the token prop directly
+        // const { token } = useAuth();
         if (token) {
           await deleteResume(resumeId, token);
           onOpenChange(false);

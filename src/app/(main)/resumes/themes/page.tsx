@@ -181,7 +181,28 @@ export default function ThemePage() {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: null, //JSON.stringify({ themeId: themeId })
+        body: JSON.stringify({
+          "firstName": "",
+          "lastName": "",
+          "title": "",
+          "description": "",
+          "photoUrl": "",
+          "colorHex": "#000000",
+          "borderStyle": "squircle",
+          "summary": "",
+          "jobTitle": "",
+          "city": "",
+          "country": "",
+          "phone": "",
+          "email": "",
+          "type": themeId,
+          "workExperiences": [
+          ],
+          "educations": [
+          ],
+          "skills": [
+          ]
+        })
       });
 
       if (!response.ok) {
