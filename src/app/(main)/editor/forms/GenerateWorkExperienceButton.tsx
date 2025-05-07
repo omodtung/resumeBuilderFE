@@ -117,10 +117,10 @@ function InputDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent aria-describedby="work-experience-description">
         <DialogHeader>
           <DialogTitle>Generate work experience</DialogTitle>
-          <DialogDescription>
+          <DialogDescription id="work-experience-description">
             Describe this work experience and the AI will generate an optimized
             entry for you.
           </DialogDescription>

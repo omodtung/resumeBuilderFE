@@ -8,7 +8,7 @@ export async function handleCheckoutPayment(planId: number, token: string): Prom
   }
 
   try {
-    const res = await fetch(`http://localhost:8080/checkout-payment?PlanId=${planId}`, {
+    const res = await fetch(`http://localhost:8080/user/checkout-payment?PlanId=${planId}`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,

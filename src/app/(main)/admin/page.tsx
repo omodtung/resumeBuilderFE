@@ -1,7 +1,8 @@
 "use client";
 
 import { useRouter } from 'next/navigation';
-import { Admin, Resource } from 'react-admin';
+import { Admin, Resource, CustomRoutes } from 'react-admin';
+import { Route } from "react-router-dom";
 import { UserList } from './users';
 import UserEdit from './edits/userEdit';
 import UserCreate from './edits/UserCreate';
@@ -15,6 +16,7 @@ import PlanEdit from './edits/PlanEdit';
 import PlanCreate from './edits/PlanCreate';
 import { useEffect, useState } from 'react';
 import { dataProvider } from './DataProvider';
+import { UserResumesList } from './UserResumesList';
 
 function AdminPage() {
   const [isClient, setIsClient] = useState(false);
@@ -44,6 +46,13 @@ function AdminPage() {
             <Resource name="user_subscriptions" list={UserSubscriptionList} edit={UserSubscriptionEdit} />
             <Resource name="resumes" list={ResumeList} edit={ResumeEdit} create={ResumeCreate} />
             <Resource name="plans" list={PlanList} edit={PlanEdit} create={PlanCreate} />
+            {/* <Resource name="users/resumes/:userId" list={UserResumesList} options={{ label: '' }} /> */}
+            <CustomRoutes>
+              <Route
+              path="users/resumes/:userId"
+              element={<UserResumesList/>}
+              />
+            </CustomRoutes>
           </Admin>
         </div>
       ) : null}

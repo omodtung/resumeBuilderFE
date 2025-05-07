@@ -82,18 +82,19 @@ export async function generateWorkExperience(
 
   // Validate form data
   const validatedData = generateWorkExperienceSchema.parse(formData);
-
+  //console.log("FETCHING AI WORK EXPERIENCE", validatedData.description);
   // Call backend API
   try {
-    const response = await fetch("http://localhost:8080/api/ai/generate-work-experience", {
+    const response = await fetch("http://localhost:8080/api/openai/generate-work-experience", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(validatedData),
+      body: JSON.stringify({ description: validatedData.description }),
     });
-
+    console.log(response);
+    //console.log(JSON.stringify({ description: validatedData.description }));
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(errorData.message || `API request failed with status ${response.status}`);

@@ -9,6 +9,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import PremiumCheckout from "./PremiumCheckout";
 
 const premiumFeatures = ["AI tools", "Up to 3 resumes"];
+const PREMIUM_PLAN_ID = 3;
+const PREMIUM_PLUS_PLAN_ID = 2;
 const premiumPlusFeatures = ["Infinite resumes", "Design customizations"];
 
 export default function PremiumModal() {
@@ -18,14 +20,17 @@ export default function PremiumModal() {
 
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [selectedPlanId, setSelectedPlanId] = useState<number | null>(null);
 
   const handleSuccess = () => {
     setSuccess(true);
     setLoading(false);
+    setSelectedPlanId(null);
   };
 
   const handleError = () => {
     setLoading(false);
+    setSelectedPlanId(null);
   };
 
   return (
@@ -56,11 +61,13 @@ export default function PremiumModal() {
               </ul>
               <Button
                 disabled={loading}
-                onClick={() => setLoading(true)}
+                onClick={() => {
+                  setLoading(true);
+                  setSelectedPlanId(PREMIUM_PLAN_ID);
+                }}
               >
                 Get Premium
               </Button>
-              {loading && <PremiumCheckout planId={3} onSuccess={handleSuccess} onError={handleError} />}
             </div>
             <div className="mx-6 border-l" />
             <div className="flex w-1/2 flex-col space-y-5">
@@ -78,13 +85,22 @@ export default function PremiumModal() {
               <Button
                 variant="premium"
                 disabled={loading}
-                onClick={() => setLoading(true)}
+                onClick={() => {
+                  setLoading(true);
+                  setSelectedPlanId(PREMIUM_PLUS_PLAN_ID);
+                }}
               >
                 Get Premium Plus
               </Button>
-              {loading && <PremiumCheckout planId={2} onSuccess={handleSuccess} onError={handleError} />}
             </div>
           </div>
+          {loading && selectedPlanId !== null && (
+            <PremiumCheckout
+              planId={selectedPlanId}
+              onSuccess={handleSuccess}
+              onError={handleError}
+            />
+          )}
         </div>
       </DialogContent>
     </Dialog>

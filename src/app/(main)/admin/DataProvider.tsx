@@ -40,17 +40,25 @@ export const dataProvider: DataProvider = {
             }
         }
 
-        let apiUrl = `${API_URL}/${
-          resource === 'plans'
-            ? 'plans-filter'
-            : resource === 'user_subscriptions'
-            ? 'user-subscription'
-            : resource === 'users'
-            ? 'users-pagi'
-            : resource === 'resumes'
-            ? 'resumes-filter'
-            : resource
-        }?page=${page}&limit=${perPage}&filter=${filter}&sort=${sort}&order=${order}`;
+        let apiUrl;
+        console.log(resource);
+        if (resource.startsWith('users/resumes/')) {
+            const userId = resource.split('/')[2];
+            
+            apiUrl = `${API_URL}/users/resumes/${userId}?page=${page}&limit=${perPage}&filter=${filter}&sort=${sort}&order=${order}`; //user resumes
+        } else {
+            apiUrl = `${API_URL}/${
+              resource === 'plans'
+                ? 'plans-filter'
+                : resource === 'user_subscriptions'
+                ? 'user-subscription'
+                : resource === 'users'
+                ? 'users-pagi'
+                : resource === 'resumes'
+                ? 'resumes-filter'
+                : resource
+            }?page=${page}&limit=${perPage}&filter=${filter}&sort=${sort}&order=${order}`;
+        }
 
         // Get token from session storage
         const token = sessionStorage.getItem('token');
@@ -64,25 +72,20 @@ export const dataProvider: DataProvider = {
         console.log(apiUrl);
         console.log(response);
 
-        // let data;
-        // let total;
+        let data;
+        let total;
 
-        //  if (resource === 'plans' || resource === 'resumes') {
-        //     data = response;
-        //     total = Array.isArray(response) ? response.length : 0;
-        // }
-        // else if (resource === 'user_subscriptions') {
-        //     data = response.user.flatMap(user => user.userSubscriptions);
-        //     total = data.length;
-        // } else {
-        //     data = response[resource];
-        //     total = Array.isArray(data) ? data.length : 1;
-        // }
+        if (resource.startsWith('users/resumes/')) {
+            data = response;
+            total = Array.isArray(response) ? response.length : 0;
+        } else {
+             data = response.data;
+             total = response.totalItems;
+        }
 
         return {
-            data: response.data,
-            // total: parseInt(response.headers.get('X-Total-Count') || '0', 10),
-            total: response.totalItems,
+            data: data,
+            total: total,
         };
     },
     getOne: async (resource, params) => {
@@ -154,7 +157,7 @@ export const dataProvider: DataProvider = {
         // Get token from session storage
         const token = sessionStorage.getItem('token');
         const response = await fetch(`${API_URL}/${resource}/${params.id}`, {
-            method: 'PUT',
+            method: 'PATCH',
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
@@ -171,7 +174,7 @@ export const dataProvider: DataProvider = {
         // Get token from session storage
         const token = sessionStorage.getItem('token');
         const response = await fetch(`${API_URL}/${resource}`, {
-            method: 'PUT',
+            method: 'PATCH',
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',

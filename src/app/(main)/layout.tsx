@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'; // Import hooks
 import Navbar from "./Navbar";
 import { usePathname } from 'next/navigation';
+import SubscriptionLevelProvider from "./SubscriptionLevelProvider";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -18,7 +19,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <div className="flex min-h-screen flex-col">
       {/* Only render Navbar if mounted and not admin page */}
       {hasMounted && !isAdminPage && <Navbar />}
-      {children}
+      <SubscriptionLevelProvider userSubscriptionLevel="free">
+        {children}
+      </SubscriptionLevelProvider>
     </div>
   );
 }

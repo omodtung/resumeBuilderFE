@@ -26,9 +26,9 @@ export const UserList = () => {
                <FunctionField
                     label="Resumes"
                     render={record => {
-                        const userValuesIds = record.userValue && record.userValue.resume ? record.userValue.resume.map(resume => resume.id) : [];
+                        // const userValuesIds = record.userValue && record.userValue.resume ? record.userValue.resume.map(resume => resume.id) : [];
                         return (
-                            <Button onClick={() => navigate(`/resumes?userValuesIds=${JSON.stringify(userValuesIds)}`)}>
+                            <Button onClick={() => navigate(`/users/resumes/${record.id}`)}>
                                 View Resumes
                             </Button>
                         );
