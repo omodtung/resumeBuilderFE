@@ -40,7 +40,7 @@ export async function generateSummary(input: GenerateSummaryInputWithAuth) {
 
   // Call backend API
   try {
-    const response = await fetch("http://localhost:8080/api/ai/generate-summary", {
+    const response = await fetch("http://localhost:8080/api/openai/summary", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -93,7 +93,7 @@ export async function generateWorkExperience(
       },
       body: JSON.stringify({ description: validatedData.description }),
     });
-    console.log(response);
+    console.log(response.body);
     //console.log(JSON.stringify({ description: validatedData.description }));
     if (!response.ok) {
       const errorData = await response.json();
