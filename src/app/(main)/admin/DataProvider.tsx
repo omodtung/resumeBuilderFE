@@ -47,7 +47,7 @@ export const dataProvider: DataProvider = {
             
             apiUrl = `${API_URL}/users/resumes/${userId}?page=${page}&limit=${perPage}&filter=${filter}&sort=${sort}&order=${order}`; //user resumes
         } else {
-            apiUrl = `${API_URL}/${
+            apiUrl = `${resource === 'user_subscriptions' ? 'http://localhost:8080/user' : API_URL}/${
               resource === 'plans'
                 ? 'plans-filter'
                 : resource === 'user_subscriptions'
