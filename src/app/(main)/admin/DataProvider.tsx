@@ -46,7 +46,11 @@ export const dataProvider: DataProvider = {
             const userId = resource.split('/')[2];
             
             apiUrl = `${API_URL}/users/resumes/${userId}?page=${page}&limit=${perPage}&filter=${filter}&sort=${sort}&order=${order}`; //user resumes
-        } else {
+        } else if (resource.startsWith('user/user-subscription-follow-userId/')) {
+             const userId = resource.split('/')[2];
+             apiUrl = `http://localhost:8080/user/user-subscription-follow-userId`; // user subscriptions by user id
+        }
+        else {
             apiUrl = `${resource === 'user_subscriptions' ? 'http://localhost:8080/user' : API_URL}/${
               resource === 'plans'
                 ? 'plans-filter'
@@ -75,7 +79,7 @@ export const dataProvider: DataProvider = {
         let data;
         let total;
 
-        if (resource.startsWith('users/resumes/')) {
+        if (resource.startsWith('users/resumes/') || resource.startsWith('user/user-subscription-follow-userId/')) {
             data = response;
             total = Array.isArray(response) ? response.length : 0;
         } else {

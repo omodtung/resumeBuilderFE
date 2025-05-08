@@ -17,6 +17,7 @@ import PlanCreate from './edits/PlanCreate';
 import { useEffect, useState } from 'react';
 import { dataProvider } from './DataProvider';
 import { UserResumesList } from './UserResumesList';
+import { UserSubscriptionListByUser } from './UserSubscriptionListByUser';
 
 function AdminPage() {
   const [isClient, setIsClient] = useState(false);
@@ -51,6 +52,10 @@ function AdminPage() {
               <Route
               path="users/resumes/:userId"
               element={<UserResumesList/>}
+              />
+              <Route
+              path="user/user-subscription-follow-userId/:userId"
+              element={<UserSubscriptionListByUser/>}
               />
             </CustomRoutes>
           </Admin>

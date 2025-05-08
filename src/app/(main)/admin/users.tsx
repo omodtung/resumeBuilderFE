@@ -21,8 +21,17 @@ export const UserList = () => {
                 <TextField source="role" sortable />
                 <EmailField source="email" sortable />
                 <TextField source="phone" sortable />
-                <DateField source="created_at" sortable />
-                <TextField source="user_subscription_id" sortable />
+                <DateField source="createdAt" sortable />
+               <FunctionField
+                    label="Subscription"
+                    render={record => {
+                        return (
+                            <Button onClick={() => navigate(`/user/user-subscription-follow-userId/${record.id}`)}>
+                                View Subscription
+                            </Button>
+                        );
+                    }}
+                />
                <FunctionField
                     label="Resumes"
                     render={record => {
