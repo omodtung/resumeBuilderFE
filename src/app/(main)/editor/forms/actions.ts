@@ -46,7 +46,22 @@ export async function generateSummary(input: GenerateSummaryInputWithAuth) {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(validatedData),
+      body: JSON.stringify({
+        jobTitle: validatedData.jobTitle,
+        skills: validatedData.skills ? validatedData.skills.join(", ") : "",
+      }),
+    });
+
+    console.log("Summary fetch request:", "http://localhost:8080/api/openai/summary", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        jobTitle: validatedData.jobTitle,
+        skills: validatedData.skills ? validatedData.skills.join(", ") : "",
+      }),
     });
 
     if (!response.ok) {
