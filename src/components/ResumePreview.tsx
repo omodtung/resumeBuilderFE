@@ -190,12 +190,10 @@ function WorkExperienceSection({ resumeData }: ResumeSectionProps) {
               }}
             >
               <span>{exp.position}</span>
-              {exp.startDate && (
-                <span>
-                  {formatDate(exp.startDate, "MM/yyyy")} -{" "}
-                  {exp.endDate ? formatDate(exp.endDate, "MM/yyyy") : "Present"}
-                </span>
-              )}
+              <span>
+                {exp.startDate && !isNaN(new Date(exp.startDate).getTime()) ? formatDate(exp.startDate, "MM/yyyy") : ""} -{" "}
+                {exp.endDate && !isNaN(new Date(exp.endDate).getTime()) ? formatDate(exp.endDate, "MM/yyyy") : ""}
+              </span>
             </div>
             <p className="text-xs font-semibold">{exp.company}</p>
             <div className="whitespace-pre-line text-xs">{exp.description}</div>

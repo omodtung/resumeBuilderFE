@@ -85,7 +85,7 @@ export async function generateWorkExperience(
   //console.log("FETCHING AI WORK EXPERIENCE", validatedData.description);
   // Call backend API
   try {
-    const response = await fetch("http://localhost:8080/api/openai/generate-work-experience", {
+    const response = await fetch("http://localhost:8080/api/openai/work-experience", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
