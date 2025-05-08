@@ -14,6 +14,7 @@ export default function NewResumeButton() {
   const { setIsLoginModalOpen } = useLoginModal();
   const router = useRouter();
 
+  /*
   const handleNewResumeClick = async () => {
     if (!token) {
       setIsLoginModalOpen(true);
@@ -42,6 +43,10 @@ export default function NewResumeButton() {
     } catch (error) {
       console.error("Error creating resume:", error);
     }
+  };
+  */
+  const handleNewResumeClick = () => {
+    router.push('/resumes/themes');
   };
 
   return (

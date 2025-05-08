@@ -182,27 +182,24 @@ export default function ThemePage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          "firstName": "",
-          "lastName": "",
-          "title": "",
-          "description": "",
-          "photoUrl": "",
+          "firstName": "Temp",
+          "lastName": "Temp",
+          "title": "Untitled",
+          "photoUrl":"",
+          "description": "none",
           "colorHex": "#000000",
           "borderStyle": "squircle",
-          "summary": "",
-          "jobTitle": "",
-          "city": "",
-          "country": "",
-          "phone": "",
-          "email": "",
+          "summary": "None",
+          "jobTitle": "none",
+          "city": "none",
+          "country": "none",
+          "phone": "00000000",
+          "email": "temp@gmail.com",
           "type": themeId,
-          "workExperiences": [
-          ],
-          "educations": [
-          ],
-          "skills": [
-          ]
-        })
+          "workExperiences": [],
+          "educations": [],
+          "skills": []
+      })
       });
 
       if (!response.ok) {
