@@ -11,7 +11,7 @@ import { useAuth } from "@/lib/auth";
 import AIChatbox from "@/components/AIChatbox";
 
 interface PageProps {
-  searchParams: Promise<{ resumeId?: string }>;
+  searchParams: Promise<{ resumeId?: string; themeId?: string }>;
 }
 
 export default function Page({ searchParams }: PageProps) {
@@ -19,6 +19,7 @@ export default function Page({ searchParams }: PageProps) {
   const [isChatboxOpen, setIsChatboxOpen] = useState(false);
   const [resumeToEdit, setResumeToEdit] = useState<ResumeServerData | null>(null);
   const [resumeId, setResumeId] = useState<string | null>(null);
+  const [themeIdFromUrl, setThemeIdFromUrl] = useState<string | null>(null);
 
   async function fetchResume(resumeId: string, token: string) {
     const response = await fetch(`http://localhost:8080/admin/resumes/${resumeId}`, {
@@ -52,6 +53,7 @@ export default function Page({ searchParams }: PageProps) {
       try {
         const resolvedSearchParams = await searchParams;
         setResumeId(resolvedSearchParams.resumeId || null);
+        setThemeIdFromUrl(resolvedSearchParams.themeId || null);
       } catch (error) {
         console.error("Error resolving searchParams:", error);
       }
@@ -72,7 +74,9 @@ export default function Page({ searchParams }: PageProps) {
 
   return (
     <div className="flex grow flex-col">
-      <ResumeEditor resumeToEdit={resumeToEdit} refetchResume={refetchResume} />
+      <ResumeEditor resumeToEdit={resumeToEdit} refetchResume={refetchResume} initialThemeId={themeIdFromUrl} />
+      {/* Added div for scrollable padding */}
+      <div className="pb-20"></div> 
       <button
         className="absolute bottom-8 right-8 bg-blue-500 text-white rounded-full p-2 hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-200"
         onClick={() => setIsChatboxOpen(!isChatboxOpen)}

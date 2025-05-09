@@ -90,6 +90,7 @@ export const resumeSchema = z.object({
   ...summarySchema.shape,
   colorHex: optionalString,
   borderStyle: optionalString,
+  type: optionalString, // Added for resume theme type
 });
 
 export type ResumeValues = Omit<z.infer<typeof resumeSchema>, "photo"> & {

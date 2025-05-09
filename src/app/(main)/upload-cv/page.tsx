@@ -33,7 +33,9 @@ const UploadCVPage = () => {
     formData.append('cvFile', cvFile);
 
     try {
-      const result = await uploadCV(formData);
+      const token = sessionStorage.getItem('token');
+      // The server action will handle the case where the token is null or invalid.
+      const result = await uploadCV(formData, token);
       if (result.success) {
         setUploadSuccess(true);
         // Optionally clear form or redirect

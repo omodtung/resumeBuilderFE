@@ -1,4 +1,6 @@
-import ResumePreview from "@/components/ResumePreview";
+import OriginalResumePreview from "@/components/ResumePreview"; // Aliased to avoid conflict
+import Theme1 from "../resumes/themes/theme1";
+import Theme2 from "../resumes/themes/theme2"; // Default export from theme2.tsx
 import { cn } from "@/lib/utils";
 import { ResumeValues } from "@/lib/validation";
 import BorderStyleButton from "./BorderStyleButton";
@@ -8,15 +10,17 @@ import { forwardRef, Ref } from "react";
 interface ResumePreviewSectionProps {
   resumeData: ResumeValues;
   setResumeData: (data: ResumeValues) => void;
+  themeId: string | null; // New prop
   className?: string;
   contentRef?: React.RefObject<HTMLDivElement>; // Add contentRef prop
 }
 
 const ResumePreviewSection = forwardRef(
   (
-    { resumeData, setResumeData, className, contentRef }: ResumePreviewSectionProps, // Destructure contentRef
+    { resumeData, setResumeData, className, contentRef, themeId }: ResumePreviewSectionProps, // Destructure contentRef and themeId
     ref: Ref<HTMLDivElement>
   ) => {
+    console.log("ResumePreviewSection resumeData:", resumeData, "themeId:", themeId); // Added console.log
     return (
       <div
         ref={ref}
@@ -37,11 +41,18 @@ const ResumePreviewSection = forwardRef(
           />
         </div>
         <div className="flex w-full justify-center overflow-y-auto bg-secondary p-3">
-          <ResumePreview
-            resumeData={resumeData}
-            className="max-w-2xl shadow-md"
-            contentRef={contentRef} // Pass contentRef down
-          />
+          {(() => {
+            if (themeId === "FPT") {
+              // Theme1 only takes resumeData as per its definition.
+              // If className and contentRef are needed, Theme1 component itself must be updated.
+              return <Theme1 resumeData={resumeData} />;
+            } else if (themeId === "VNG") {
+              return <Theme2 resumeData={resumeData} className="max-w-2xl shadow-md" contentRef={contentRef} />;
+            } else {
+              // Fallback to original preview if themeId is not FPT or VNG, or use resumeData.type as a secondary fallback
+              return <OriginalResumePreview resumeData={resumeData} className="max-w-2xl shadow-md" contentRef={contentRef} />;
+            }
+          })()}
         </div>
       </div>
     );

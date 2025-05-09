@@ -1,6 +1,9 @@
 "use server";
 
-export async function uploadCV(formData: FormData) {
+// The token will be passed as an argument from the client-side call
+// as Server Actions cannot directly access client-side sessionStorage or React hooks.
+
+export async function uploadCV(formData: FormData, token: string | null) { // Added token parameter
   const name = formData.get('name') as string;
   const phone = formData.get('phone') as string;
   const company = formData.get('company') as string;
@@ -19,6 +22,11 @@ export async function uploadCV(formData: FormData) {
 
   // First fetch: Link Job/CV with company type, name, and phone
   try {
+    if (!token) {
+      console.error('Authentication token was not provided to the server action.');
+      return { success: false, error: 'Authentication token is missing.', step: 'auth' };
+    }
+
     const linkJobFormData = new FormData();
     linkJobFormData.append('name', name);
     linkJobFormData.append('phone', phone);
@@ -28,7 +36,10 @@ export async function uploadCV(formData: FormData) {
     console.log(`Attempting to link job/CV at: ${linkJobUrl}`);
     const linkResponse = await fetch(linkJobUrl, {
       method: 'POST',
-      body: linkJobFormData,
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+      body: null,
     });
 
     if (linkResponse.ok) {

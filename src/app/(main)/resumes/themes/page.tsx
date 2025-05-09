@@ -5,6 +5,7 @@ import { useAuth } from "@/lib/auth";
 import { useLoginModal } from "@/context/LoginModalContext";
 import { Button } from "@/components/ui/button";
 import { PlusSquare } from "lucide-react";
+import { jwtDecode, JwtPayload } from "jwt-decode"; // Added for decoding token
 import { useRouter } from 'next/navigation';
 import ResumePreview from "@/components/ResumePreview";
 import { mapToResumeValues } from "@/lib/utils";
@@ -174,6 +175,27 @@ export default function ThemePage() {
   }, []);
 
   const createResume = async (token: string | null, themeId: string) => {
+    if (!token) {
+      console.error("No token provided to createResume");
+      return null;
+    }
+
+    let userEmail = "temp@gmail.com";
+    try {
+      interface MyTokenPayload extends JwtPayload {
+        email?: string; 
+        // Add other fields from your token payload if needed
+      }
+      const decodedToken = jwtDecode<MyTokenPayload>(token);
+      if (decodedToken && decodedToken.email) {
+        userEmail = decodedToken.email;
+      } else {
+        console.warn("Email not found in token, using default.");
+      }
+    } catch (error) {
+      console.error("Failed to decode token or extract email:", error);
+    }
+
     try {
       const response = await fetch("http://localhost:8080/admin/resumes", {
         method: "POST",
@@ -194,7 +216,7 @@ export default function ThemePage() {
           "city": "none",
           "country": "none",
           "phone": "00000000",
-          "email": "temp@gmail.com",
+          "email": userEmail,
           "type": themeId,
           "workExperiences": [],
           "educations": [],
@@ -222,7 +244,7 @@ export default function ThemePage() {
     }
     const resumeId = await createResume(token, theme.id);
     if (resumeId) {
-      router.push(`/editor?resumeId=${resumeId}`);
+      router.push(`/editor?resumeId=${resumeId}&themeId=${theme.id}`);
     }
   };
 

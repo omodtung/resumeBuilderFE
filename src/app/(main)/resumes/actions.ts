@@ -28,27 +28,27 @@ export async function deleteResume(id: number, token: string | null) {
     throw new Error("User not authenticated");
   }
 
-  let resumeToEdit = null;
+  // let resumeToEdit = null;
   
-  const response = await fetch(`http://localhost:8080/user/resumes-individual/`, {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    cache: "no-store", // optional: to always fetch fresh data
-  });
+  // const response = await fetch(`http://localhost:8080/user/resumes-individual/`, {
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //     Authorization: `Bearer ${token}`,
+  //   },
+  //   cache: "no-store", // optional: to always fetch fresh data
+  // });
 
-  if (response.ok) {
-    const data = await response.json();
-    console.log("Resume data:", resumeToEdit);
-    resumeToEdit = data.resume; // backend should return { resume: { ... } }
+  // if (response.ok) {
+  //   const data = await response.json();
+  //   console.log("Resume data:", resumeToEdit);
+  //   resumeToEdit = data.resume; // backend should return { resume: { ... } }
     
-  }
+  // }
   
 
-  if (!resumeToEdit) {
-    throw new Error("Resume not found");
-  }
+  // if (!resumeToEdit) {
+  //   throw new Error("Resume not found");
+  // }
 
   // if (resumeToEdit.photoUrl) {
   //   await del(resumeToEdit.photoUrl);

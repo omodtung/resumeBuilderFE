@@ -23,11 +23,11 @@ import { mapToResumeValues } from "@/lib/utils";
 import { formatDate } from "date-fns";
 import { MoreVertical, Printer, Trash2 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation"; // Added for router.refresh()
 import { useRef, useState, useTransition } from "react";
 import { useReactToPrint } from "react-to-print";
 import { deleteResume } from "./actions";
-// Remove useAuth import from here if no longer needed elsewhere in this file
-// import { useAuth } from "@/lib/auth";
+// import { useAuth } from "@/lib/auth"; // This was correctly commented out or removed earlier
 
 interface ResumeItemProps {
   resume: ResumeServerData;
@@ -131,7 +131,7 @@ function MoreMenu({ resumeId, onPrintClick, token }: MoreMenuProps) { // Accept 
   );
 }
 
-import { useAuth } from "@/lib/auth"; // Keep this import if needed for other parts, otherwise remove
+// Removed the stray useAuth import from here as token is passed via props.
 
 interface DeleteConfirmationDialogProps {
   resumeId: number;
@@ -147,19 +147,16 @@ function DeleteConfirmationDialog({
   token, // Accept token prop
 }: DeleteConfirmationDialogProps) {
   const { toast } = useToast();
-  // Remove useAuth call from here
-  // const { token } = useAuth();
-
+  const router = useRouter(); // Get router instance
   const [isPending, startTransition] = useTransition();
 
   async function handleDelete() {
     startTransition(async () => {
       try {
-        // Remove redundant useAuth call, use the token prop directly
-        // const { token } = useAuth();
         if (token) {
           await deleteResume(resumeId, token);
           onOpenChange(false);
+          window.location.reload(); // Force a full page reload
         } else {
           console.error("No token found");
           toast({

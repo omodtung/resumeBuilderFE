@@ -19,9 +19,10 @@ import { generateResumePdf } from '@/lib/pdfGenerator';
 interface ResumeEditorProps {
   resumeToEdit: ResumeServerData | null;
   refetchResume: () => Promise<void>;
+  initialThemeId: string | null; // New prop
 }
 
-export default function ResumeEditor({ resumeToEdit, refetchResume }: ResumeEditorProps) {
+export default function ResumeEditor({ resumeToEdit, refetchResume, initialThemeId }: ResumeEditorProps) {
   const searchParams = useSearchParams();
   const resumePreviewRef = useRef<HTMLDivElement>(null); // Keep this ref for the section if needed elsewhere
   const resumeContentRef = useRef<HTMLDivElement>(null); // Add ref for the inner content
@@ -89,6 +90,7 @@ export default function ResumeEditor({ resumeToEdit, refetchResume }: ResumeEdit
             contentRef={resumeContentRef} // Pass the new content ref down
             resumeData={resumeData}
             setResumeData={setResumeData}
+            themeId={initialThemeId} // Pass the themeId from URL
             className={cn(showSmResumePreview && "flex")}
           />
         </div>
