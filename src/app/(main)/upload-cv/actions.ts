@@ -12,35 +12,82 @@ export async function uploadCV(formData: FormData) {
   console.log('Company:', company);
   console.log('File:', cvFile.name, cvFile.size, cvFile.type);
 
-  const uploadUrl = `http://localhost:8080/link-jobCV-upload-file-cv?type=${encodeURIComponent(company)}`;
+  const linkJobUrl = `http://localhost:8080/link-jobCV-upload-file-cv?type=${encodeURIComponent(company)}`;
+  const fileUploadUrl = `http://localhost:8080/file-open-send`;
 
+  let linkJobResponseData: any = null;
+
+  // First fetch: Link Job/CV with company type, name, and phone
   try {
-    // Create a new FormData for the fetch request if you need to modify it
-    // or if the original formData is consumed/locked by Next.js server actions.
-    // For simplicity, we'll try to use the original formData directly.
-    // If issues arise, create a new FormData and append fields manually.
-    const response = await fetch(uploadUrl, {
+    const linkJobFormData = new FormData();
+    linkJobFormData.append('name', name);
+    linkJobFormData.append('phone', phone);
+    // Add other fields if the first endpoint expects them, e.g., company name in body too
+    // linkJobFormData.append('company', company); 
+
+    console.log(`Attempting to link job/CV at: ${linkJobUrl}`);
+    const linkResponse = await fetch(linkJobUrl, {
       method: 'POST',
-      body: formData,
-      // Headers might not be strictly necessary if the server is lenient,
-      // as FormData typically sets 'Content-Type' to 'multipart/form-data' automatically.
-      // However, if the server requires it explicitly:
-      // headers: {
-      //   // 'Content-Type': 'multipart/form-data', // Usually set by browser/fetch with FormData
-      // },
+      body: linkJobFormData,
     });
 
-    if (response.ok) {
-      const responseData = await response.json(); // Or response.text() if not JSON
-      console.log('Successfully uploaded to backend:', responseData);
-      return { success: true, data: responseData };
+    if (linkResponse.ok) {
+      try {
+        linkJobResponseData = await linkResponse.json(); // Or .text() if not JSON
+        console.log('Successfully linked job/CV:', linkJobResponseData);
+      } catch (e) {
+        // If response is OK but not JSON (e.g. empty or text)
+        const textResponse = await linkResponse.text(); // Re-read as text
+        console.log('Successfully linked job/CV (non-JSON response):', textResponse);
+        linkJobResponseData = textResponse || "No content"; 
+      }
     } else {
-      const errorText = await response.text();
-      console.error('Failed to upload to backend:', response.status, errorText);
-      return { success: false, error: `Backend Error: ${response.status} - ${errorText}` };
+      const errorText = await linkResponse.text();
+      console.error('Failed to link job/CV:', linkResponse.status, errorText);
+      return { success: false, error: `Link Job Error: ${linkResponse.status} - ${errorText}`, step: 'linkJob' };
     }
   } catch (error: any) {
-    console.error('Error during fetch operation:', error);
-    return { success: false, error: error.message || 'Unknown fetch error' };
+    console.error('Error during link job/CV operation:', error);
+    return { success: false, error: error.message || 'Unknown link job error', step: 'linkJob' };
+  }
+
+  // Second fetch: Upload the actual file
+  try {
+    const fileUploadFormData = new FormData();
+    fileUploadFormData.append('cvFile', cvFile, cvFile.name);
+    // Optionally include name and phone again if this endpoint requires them
+    // and cannot correlate with the first call via session or other means.
+    fileUploadFormData.append('name', name);
+    fileUploadFormData.append('phone', phone);
+    // If the first call returned an ID that needs to be sent with the file:
+    // if (linkJobResponseData && linkJobResponseData.id) {
+    //   fileUploadFormData.append('jobId', linkJobResponseData.id);
+    // }
+
+    console.log(`Attempting to upload file to: ${fileUploadUrl}`);
+    const fileResponse = await fetch(fileUploadUrl, {
+      method: 'POST',
+      body: fileUploadFormData,
+    });
+
+    if (fileResponse.ok) {
+      let fileUploadResponseData: any;
+      try {
+        fileUploadResponseData = await fileResponse.json(); // Or .text()
+        console.log('Successfully uploaded file:', fileUploadResponseData);
+      } catch(e) {
+        const textResponse = await fileResponse.text();
+        console.log('Successfully uploaded file (non-JSON response):', textResponse);
+        fileUploadResponseData = textResponse || "No content";
+      }
+      return { success: true, data: { linkJob: linkJobResponseData, fileUpload: fileUploadResponseData } };
+    } else {
+      const errorText = await fileResponse.text();
+      console.error('Failed to upload file:', fileResponse.status, errorText);
+      return { success: false, error: `File Upload Error: ${fileResponse.status} - ${errorText}`, step: 'fileUpload' };
+    }
+  } catch (error: any) {
+    console.error('Error during file upload operation:', error);
+    return { success: false, error: error.message || 'Unknown file upload error', step: 'fileUpload' };
   }
 }
