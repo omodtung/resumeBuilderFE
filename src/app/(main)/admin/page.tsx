@@ -24,8 +24,13 @@ function AdminPage() {
   const router = useRouter();
 
   useEffect(() => {
-    setIsClient(true);
-  }, []);
+    const token = sessionStorage.getItem('token');
+    if (!token) {
+      router.push('/landingpage');
+    } else {
+      setIsClient(true);
+    }
+  }, [router]);
 
   const handleLogout = () => {
     sessionStorage.clear();

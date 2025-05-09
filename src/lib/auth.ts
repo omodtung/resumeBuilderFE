@@ -21,6 +21,7 @@ export function useAuth() {
         },
       });
       if (res.ok) {
+        console.log("User data:", res);
         const userData = await res.json();
         setUserData(userData);
       } else {

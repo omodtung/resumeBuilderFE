@@ -13,6 +13,7 @@ import Link from "next/link";
 import { jwtDecode } from "jwt-decode";
 import LoginModal from "@/components/LoginModal";
 import AccountSettingsDialog from "@/components/AccountSettingsDialog";
+import { useIsAdmin } from "@/lib/isAdmin";
 import { useLoginModal } from "@/context/LoginModalContext";
 
 function UserMenu({ username }: { username: string }) {
@@ -20,6 +21,7 @@ function UserMenu({ username }: { username: string }) {
   const [accountSettingsOpen, setAccountSettingsOpen] = useState(false);
   const [hasMounted, setHasMounted] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const isAdmin = useIsAdmin();
 
   useEffect(() => {
     setHasMounted(true);
@@ -62,6 +64,11 @@ function UserMenu({ username }: { username: string }) {
           <Link href="/upload-cv" className="flex items-center px-4 py-2 text-sm text-gray-700 border rounded-md hover:border-blue-500 bg-white hover:bg-gray-100 w-full">
             Upload CV
           </Link>
+          {isAdmin && (
+            <Link href="/admin" className="flex items-center px-4 py-2 text-sm text-gray-700 border rounded-md hover:border-blue-500 bg-white hover:bg-gray-100 w-full">
+              Admin Dashboard
+            </Link>
+          )}
           {/* <div className="mt-1" /> */}
           <button
             onClick={() => {
