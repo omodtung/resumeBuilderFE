@@ -56,11 +56,11 @@ const UploadCVPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700">Họ tên:<span className="text-red-500">*</span></label>
-            <input type="text" id="name" className="mt-1 block w-full border border-gray-200 rounded-md shadow-sm p-2 bg-gray-50" value={name} onChange={(e) => setName(e.target.value)} />
+            <input type="text" id="name" className="mt-1 block w-full border border-gray-200 rounded-md shadow-sm p-2 bg-gray-50 text-black" value={name} onChange={(e) => setName(e.target.value)} />
           </div>
           <div>
             <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Điện thoại:<span className="text-red-500">*</span></label>
-            <input type="text" id="phone" className="mt-1 block w-full border border-gray-200 rounded-md shadow-sm p-2 bg-gray-50" value={phone} onChange={(e) => setPhone(e.target.value)} />
+            <input type="text" id="phone" className="mt-1 block w-full border border-gray-200 rounded-md shadow-sm p-2 bg-gray-50 text-black" value={phone} onChange={(e) => setPhone(e.target.value)} />
           </div>
         </div>
 
