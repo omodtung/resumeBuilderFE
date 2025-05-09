@@ -16,7 +16,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const isAdminPage = pathname?.startsWith('/admin');
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col" suppressHydrationWarning={true}>
       {/* Only render Navbar if mounted and not admin page */}
       {hasMounted && !isAdminPage && <Navbar />}
       <SubscriptionLevelProvider userSubscriptionLevel="free">
