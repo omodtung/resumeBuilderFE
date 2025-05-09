@@ -7,11 +7,17 @@ import ResumeItem from "./ResumeItem";
 import { ResumeServerData } from "@/lib/types";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth";
-
+import { Button } from "@/components/ui/button";
+import { PlusSquare } from "lucide-react";
+import { useLoginModal } from "@/context/LoginModalContext";
+import LoginModal from "@/components/LoginModal";
+import { useRouter } from "next/navigation";
 
 
 export default function Page() {
   const [resumes, setResumes] = useState<ResumeServerData[]>([]);
+  const { setIsLoginModalOpen } = useLoginModal();
+  const router = useRouter();
   // Call useAuth once here
   const { token } = useAuth();
 
@@ -47,7 +53,10 @@ export default function Page() {
 
   return (
     <main className="mx-auto w-full max-w-7xl space-y-6 px-3 py-6">
-      <NewResumeButton />
+      <div className="flex gap-4 justify-center">
+        <NewResumeButton type="blank" buttonText="New Blank Resume" />
+        <NewResumeButton type="template" buttonText="New Template Resume" />
+      </div>
       <div className="flex w-full grid-cols-2 flex-col gap-3 sm:grid md:grid-cols-3 lg:grid-cols-4">
         {resumes.map((resume) => (
           // Pass token down as a prop
