@@ -6,6 +6,7 @@ import { uploadCV } from './actions';
 const UploadCVPage = () => {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
+  const [company, setCompany] = useState('');
   const [cvFile, setCvFile] = useState<File | null>(null);
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -17,7 +18,7 @@ const UploadCVPage = () => {
   };
 
   const handleUpload = async () => {
-    if (!name || !phone || !cvFile) {
+    if (!name || !phone || !company || !cvFile) {
       alert('Please fill in all required fields and select a file.');
       return;
     }
@@ -28,6 +29,7 @@ const UploadCVPage = () => {
     const formData = new FormData();
     formData.append('name', name);
     formData.append('phone', phone);
+    formData.append('company', company);
     formData.append('cvFile', cvFile);
 
     try {
@@ -61,6 +63,22 @@ const UploadCVPage = () => {
           <div>
             <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Điện thoại:<span className="text-red-500">*</span></label>
             <input type="text" id="phone" className="mt-1 block w-full border border-gray-200 rounded-md shadow-sm p-2 bg-gray-50 text-black" value={phone} onChange={(e) => setPhone(e.target.value)} />
+          </div>
+        </div>
+
+        <div className="mb-4">
+          <div>
+            <label htmlFor="company" className="block text-sm font-medium text-gray-700">Công ty:<span className="text-red-500">*</span></label>
+            <select
+              id="company"
+              className="mt-1 block w-full border border-gray-200 rounded-md shadow-sm p-2 bg-gray-50 text-black"
+              value={company}
+              onChange={(e) => setCompany(e.target.value)}
+            >
+              <option value="">Chọn công ty</option>
+              <option value="FPT">FPT</option>
+              <option value="VETTEL">VETTEL</option>
+            </select>
           </div>
         </div>
 
