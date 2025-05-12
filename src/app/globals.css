@@ -98,7 +98,7 @@ body {
   }
 
   /* Reset zoom for the specific content div during print */
-  #resume-content-for-print {
+  .printable-resume-content { /* Changed from ID to class */
     zoom: initial !important;
   }
 }

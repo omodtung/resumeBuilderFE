@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
 import {
   Dialog,
   DialogContent,
@@ -18,11 +19,31 @@ interface AccountSettingsDialogProps {
   username: string;
 }
 
+interface DecodedToken {
+  email?: string;
+  // Add other properties from your token if needed
+}
+
 function AccountSettingsDialog({ open, setOpen, username }: AccountSettingsDialogProps) {
-  const [email, setEmail] = useState("florian@codinginflow.com");
+  const [email, setEmail] = useState("");
   const [isEditingUsername, setIsEditingUsername] = useState(false); // State to track if username is being edited
   const [editableUsername, setEditableUsername] = useState(username); // State for the editable username input
   const { toast } = useToast();
+
+  useEffect(() => {
+    const token = sessionStorage.getItem("token");
+    if (token) {
+      try {
+        const decodedToken = jwtDecode<DecodedToken>(token);
+        if (decodedToken?.email) {
+          setEmail(decodedToken.email);
+        }
+      } catch (error) {
+        console.error("Failed to decode token:", error);
+        // Optionally, handle the error, e.g., show a toast message
+      }
+    }
+  }, []);
 
   const isValidEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

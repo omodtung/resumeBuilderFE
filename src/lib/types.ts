@@ -13,6 +13,7 @@ export interface ResumeServerData {
   photoUrl: string;
   colorHex: string;
   borderStyle: string;
+  type: string; // Added for theme type
   summary: string;
   firstName: string;
   lastName: string;

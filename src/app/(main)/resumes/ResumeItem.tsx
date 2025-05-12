@@ -1,7 +1,9 @@
 "use client";
 
 import LoadingButton from "@/components/LoadingButton";
-import ResumePreview from "@/components/ResumePreview";
+import OriginalResumePreview from "@/components/ResumePreview"; // Aliased import
+import Theme1 from "./themes/theme1"; // Import Theme1
+import Theme2 from "./themes/theme2"; // Import Theme2 (default export from theme2.tsx)
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -68,11 +70,19 @@ export default function ResumeItem({ resume, token }: ResumeItemProps) { // Acce
           href={`/editor?resumeId=${resume.id}`}
           className="relative inline-block w-full"
         >
-          <ResumePreview
-            resumeData={mapToResumeValues(resume)}
-            contentRef={contentRef}
-            className="overflow-hidden shadow-sm transition-shadow group-hover:shadow-lg"
-          />
+          {(() => {
+            const mappedResumeData = mapToResumeValues(resume);
+            const previewClassName = "overflow-hidden shadow-sm transition-shadow group-hover:shadow-lg";
+
+            if (resume.type === "FPT") {
+              return <Theme1 resumeData={mappedResumeData} className={previewClassName} contentRef={contentRef} />;
+            } else if (resume.type === "VNG") {
+              // Theme2 (ResumePreview from theme2.tsx) expects contentRef
+              return <Theme2 resumeData={mappedResumeData} className={previewClassName} contentRef={contentRef} />;
+            } else {
+              return <OriginalResumePreview resumeData={mappedResumeData} contentRef={contentRef} className={previewClassName} />;
+            }
+          })()}
           <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-white to-transparent" />
         </Link>
       </div>

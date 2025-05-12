@@ -31,9 +31,8 @@ export default function ResumePreview({
       ref={containerRef}
     >
       <div
-        id="resume-content-for-print" // Added ID for print targeting
         ref={contentRef} // Attach contentRef here
-        className={cn("space-y-6 p-6", !width && "invisible")}
+        className={cn("printable-resume-content space-y-6 p-6", !width && "invisible")} // Replaced ID with class
         style={{
           zoom: (1 / 794) * width,
         }}

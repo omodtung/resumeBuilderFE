@@ -6,6 +6,7 @@ import { formatDate } from "date-fns";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { Badge } from "@/components/ui/badge";
+import vngLogo from "@/assets/vng.jpeg";
 
 interface ResumePreviewProps {
   resumeData: ResumeValues;
@@ -30,7 +31,7 @@ export default function ResumePreview({
       ref={containerRef}
     >
       <div
-        className={cn("space-y-6 p-6", !width && "invisible")}
+        className={cn("printable-resume-content space-y-6 p-6", !width && "invisible")}
         style={{
           zoom: (1 / 794) * width,
         }}
@@ -74,50 +75,64 @@ function PersonalInfoHeader({ resumeData }: ResumeSectionProps) {
   }, [photo]);
 
   return (
-    <div className="flex items-center gap-6">
-      {photoSrc && (
-        <Image
-          src={photoSrc}
-          width={100}
-          height={100}
-          alt="Author photo"
-          className="aspect-square object-cover"
-          style={{
-            borderRadius:
-              borderStyle === BorderStyles.SQUARE
-                ? "0px"
-                : borderStyle === BorderStyles.CIRCLE
-                  ? "9999px"
-                  : "10%",
-          }}
-        />
-      )}
-      <div className="space-y-2.5">
-        <div className="space-y-1">
-          <p
-            className="text-3xl font-bold"
+    <div className="flex items-start justify-between gap-6">
+      {/* Left side: Avatar and Personal Info */}
+      <div className="flex items-center gap-6">
+        {photoSrc && (
+          <Image
+            src={photoSrc}
+            width={100}
+            height={100}
+            alt="Author photo"
+            className="aspect-square object-cover"
             style={{
-              color: colorHex,
+              borderRadius:
+                borderStyle === BorderStyles.SQUARE
+                  ? "0px"
+                  : borderStyle === BorderStyles.CIRCLE
+                    ? "9999px"
+                    : "10%",
             }}
-          >
-            {firstName} {lastName}
-          </p>
-          <p
-            className="font-medium"
-            style={{
-              color: colorHex,
-            }}
-          >
-            {jobTitle}
+          />
+        )}
+        <div className="space-y-2.5">
+          <div className="space-y-1">
+            <p
+              className="text-3xl font-bold"
+              style={{
+                color: colorHex,
+              }}
+            >
+              {firstName} {lastName}
+            </p>
+            <p
+              className="font-medium"
+              style={{
+                color: colorHex,
+              }}
+            >
+              {jobTitle}
+            </p>
+          </div>
+          <p className="text-xs text-gray-500">
+            {city}
+            {city && country ? ", " : ""}
+            {country}
+            {(city || country) && (phone || email) ? " • " : ""}
+            {[phone, email].filter(Boolean).join(" • ")}
           </p>
         </div>
-        <p className="text-xs text-gray-500">
-          {city}
-          {city && country ? ", " : ""}
-          {country}
-          {(city || country) && (phone || email) ? " • " : ""}
-          {[phone, email].filter(Boolean).join(" • ")}
-        </p>
+      </div>
+
+      {/* Right side: VNG Logo */}
+      <div>
+        <Image
+          src={vngLogo}
+          alt="VNG Logo"
+          width={100} // Adjust width as needed for VNG logo
+          height={50} // Adjust height as needed for VNG logo
+          objectFit="contain"
+        />
       </div>
     </div>
   );
