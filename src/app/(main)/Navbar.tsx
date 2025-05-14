@@ -117,7 +117,7 @@ export default function Navbar() {
                 // Refresh the token
                 try {
                   const token = sessionStorage.getItem("token");
-                  const response = await fetch("/auth-controller/refreshToken", {
+                  const response = await fetch("localhost:8080/auth/refresh-token", {
                     method: "POST",
                     headers: {
                       "Content-Type": "application/json",
