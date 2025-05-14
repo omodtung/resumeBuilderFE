@@ -74,9 +74,9 @@ export default function Page({ searchParams }: PageProps) {
 
   return (
     <div className="flex grow flex-col">
-      <ResumeEditor resumeToEdit={resumeToEdit} refetchResume={refetchResume} initialThemeId={themeIdFromUrl} />
+      <ResumeEditor resumeToEdit={resumeToEdit} refetchResume={refetchResume} />
       {/* Added div for scrollable padding */}
-      <div className="pb-20"></div> 
+      <div className="pb-20"></div>
       <button
         className="absolute bottom-8 right-8 bg-blue-500 text-white rounded-full p-2 hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-200"
         onClick={() => setIsChatboxOpen(!isChatboxOpen)}

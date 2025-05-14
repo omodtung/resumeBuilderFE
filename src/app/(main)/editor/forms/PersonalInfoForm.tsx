@@ -59,12 +59,15 @@ export default function PersonalInfoForm({
     formData.append("File", file);
 
     try {
+      const token = sessionStorage.getItem("token");
+
       const response = await fetch("http://localhost:8080/upload-file-cv", {
         method: "POST",
         body: formData,
         headers: {
           isResume: "true",
           idResume: resumeData.id?.toString() || "",
+          Authorization: `Bearer ${token}`,
         },
       });
       console.log(resumeData.id?.toString());
@@ -81,9 +84,22 @@ export default function PersonalInfoForm({
         await refetchResume();
         // The photoUrl state will be updated by the useEffect hook watching resumeData.photoUrl
       } else {
-        // Assume the response is the image name (from photo upload)
+        // Fetch the image URL from the server
         const imageName = data;
-        const imageUrl = `http://localhost:8080/images/avatar/${imageName}`;
+        const imageUrlEndpoint = `http://localhost:8080/images/avatar/${imageName}`;
+
+        const responseImageUrl = await fetch(imageUrlEndpoint, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!responseImageUrl.ok) {
+          throw new Error(`Failed to fetch image URL: ${responseImageUrl.statusText}`);
+        }
+
+        const imageUrl = await responseImageUrl.text();
         console.log("Image URL:", imageUrl);
         setPhotoUrl(imageUrl);
       }

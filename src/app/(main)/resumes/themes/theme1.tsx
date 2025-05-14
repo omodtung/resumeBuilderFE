@@ -55,6 +55,7 @@ export default function Theme1({
 
 Theme1.typeId = "FPT"; // Keep the original typeId
 
+
 interface ResumeSectionProps {
   resumeData: ResumeValues;
 }

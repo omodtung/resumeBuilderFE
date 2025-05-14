@@ -51,6 +51,8 @@ interface ResumeSectionProps {
   resumeData: ResumeValues;
 }
 
+console.log("USING VNG");
+
 function PersonalInfoHeader({ resumeData }: ResumeSectionProps) {
   const {
     photo,

@@ -10,17 +10,16 @@ import { forwardRef, Ref } from "react";
 interface ResumePreviewSectionProps {
   resumeData: ResumeValues;
   setResumeData: (data: ResumeValues) => void;
-  themeId: string | null; // New prop
   className?: string;
   contentRef?: React.RefObject<HTMLDivElement>; // Add contentRef prop
 }
 
 const ResumePreviewSection = forwardRef(
   (
-    { resumeData, setResumeData, className, contentRef, themeId }: ResumePreviewSectionProps, // Destructure contentRef and themeId
+    { resumeData, setResumeData, className, contentRef }: ResumePreviewSectionProps, // Destructure contentRef and themeId
     ref: Ref<HTMLDivElement>
   ) => {
-    console.log("ResumePreviewSection resumeData:", resumeData, "themeId:", themeId); // Added console.log
+    console.log("ResumePreviewSection resumeData:", resumeData); // Added console.log
     return (
       <div
         ref={ref}
@@ -42,11 +41,11 @@ const ResumePreviewSection = forwardRef(
         </div>
         <div className="flex w-full justify-center overflow-y-auto bg-secondary p-3">
           {(() => {
-            if (themeId === "FPT") {
+            if (resumeData.type === "FPT") {
               // Theme1 only takes resumeData as per its definition.
               // If className and contentRef are needed, Theme1 component itself must be updated.
               return <Theme1 resumeData={resumeData} />;
-            } else if (themeId === "VNG") {
+            } else if (resumeData.type === "VNG") {
               return <Theme2 resumeData={resumeData} className="max-w-2xl shadow-md" contentRef={contentRef} />;
             } else {
               // Fallback to original preview if themeId is not FPT or VNG, or use resumeData.type as a secondary fallback
