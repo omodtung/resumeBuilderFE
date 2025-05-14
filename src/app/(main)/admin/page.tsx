@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from 'next/navigation';
-import { Admin, Resource, CustomRoutes } from 'react-admin';
+import { Admin, Resource, CustomRoutes, houseLightTheme, houseDarkTheme } from 'react-admin';
 import { Route } from "react-router-dom";
 import { UserList } from './users';
 import UserEdit from './edits/userEdit';
@@ -18,10 +18,13 @@ import { useEffect, useState } from 'react';
 import { dataProvider } from './DataProvider';
 import { UserResumesList } from './UserResumesList';
 import { UserSubscriptionListByUser } from './UserSubscriptionListByUser';
+import { deepmerge } from '@mui/utils';
 
 function AdminPage() {
   const [isClient, setIsClient] = useState(false);
   const router = useRouter();
+  const lightTheme = houseLightTheme;
+  const darkTheme = deepmerge(houseDarkTheme, { palette: { mode: 'dark' } });
 
   useEffect(() => {
     const token = sessionStorage.getItem('token');
@@ -43,11 +46,11 @@ function AdminPage() {
         <div className="relative">
           <button
             onClick={handleLogout}
-            className="absolute top-2 right-2 z-10 px-4 py-2 bg-red-500 text-white rounded cursor-pointer"
+            className="absolute top-1 right-24 z-10 px-4 py-2 bg-red-500 text-white rounded cursor-pointer flex items-center"
           >
             Logout
           </button>
-          <Admin dataProvider={dataProvider}>
+          <Admin dataProvider={dataProvider} theme={lightTheme} darkTheme={darkTheme}>
             <Resource name="users" list={UserList} edit={UserEdit} create={UserCreate}  />
             <Resource name="user_subscriptions" list={UserSubscriptionList} edit={UserSubscriptionEdit} />
             <Resource name="resumes" list={ResumeList} edit={ResumeEdit} create={ResumeCreate} />

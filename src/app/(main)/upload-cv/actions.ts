@@ -68,8 +68,6 @@ export async function uploadCV(formData: FormData, token: string | null) { // Ad
     fileUploadFormData.append('cvFile', cvFile, cvFile.name);
     // Optionally include name and phone again if this endpoint requires them
     // and cannot correlate with the first call via session or other means.
-    fileUploadFormData.append('name', name);
-    fileUploadFormData.append('phone', phone);
     // If the first call returned an ID that needs to be sent with the file:
     // if (linkJobResponseData && linkJobResponseData.id) {
     //   fileUploadFormData.append('jobId', linkJobResponseData.id);
