@@ -21,7 +21,7 @@ export default function PersonalInfoForm({
   refetchResume,
 }: EditorFormProps) {
   const [photoUrl, setPhotoUrl] = useState<string | undefined>(
-    resumeData.photoUrl,
+    resumeData.photoUrl ? `http://localhost:8080/images/avatar/${resumeData.photoUrl}` : undefined
   );
   const form = useForm<PersonalInfoValues>({
     resolver: zodResolver(personalInfoSchema),
@@ -33,7 +33,7 @@ export default function PersonalInfoForm({
       country: resumeData.country || "",
       phone: resumeData.phone || "",
       email: resumeData.email || "",
-      photoUrl: resumeData.photoUrl || "",
+      photoUrl: resumeData.photoUrl ? `http://localhost:8080/images/avatar/${resumeData.photoUrl}` : "",
     },
   });
 

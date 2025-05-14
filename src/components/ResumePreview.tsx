@@ -66,7 +66,7 @@ function PersonalInfoHeader({ resumeData }: ResumeSectionProps) {
     borderStyle,
   } = resumeData;
 
-  const [photoSrc, setPhotoSrc] = useState(photo instanceof File ? "" : photo);
+  const [photoSrc, setPhotoSrc] = useState(photo instanceof File ? "" : `http://localhost:8080/images/avatar/${photo}`);
 
   useEffect(() => {
     const objectUrl = photo instanceof File ? URL.createObjectURL(photo) : "";
