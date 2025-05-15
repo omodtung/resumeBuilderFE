@@ -105,7 +105,7 @@ export const dataProvider: DataProvider = {
         const keys = Object.keys(response);
         const key = keys[0];
         let data = response[key];
-        if (resource === 'users') {
+        if (resource === 'user_subscriptions') {
             const userSubscriptionResponse = await fetch(`${API_URL}/user_subscription/${data.user_subscription_id}`).then(res => res.json());
             data.user_subscription = userSubscriptionResponse.user_subscription;
         }
