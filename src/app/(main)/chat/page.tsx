@@ -30,6 +30,7 @@ const ChatPage = () => {
   ]);
   const [input, setInput] = useState("");
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [loading, setLoading] = useState(false);
   const { theme } = useTheme();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,6 +39,7 @@ const ChatPage = () => {
 
   const handleSendMessage = async () => {
     if (input.trim() !== "" || uploadedFile) {
+      setLoading(true);
       const newMessages = [...messages, { text: input, sender: "user" }];
       if (uploadedFile) {
         const fileType = uploadedFile.type;
@@ -127,6 +129,8 @@ const ChatPage = () => {
           }
         } catch (error) {
           console.error("Error sending message:", error);
+        } finally {
+          setLoading(false);
         }
       }
 
@@ -214,10 +218,11 @@ const ChatPage = () => {
             }}
           />
           <button
-            className="rounded-r-md bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
+            className="rounded-r-md bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
             onClick={handleSendMessage}
+            disabled={loading}
           >
-            Gửi
+            {loading ? "Đang gửi..." : "Gửi"}
           </button>
           <label className="ml-2 cursor-pointer rounded-md bg-gray-200 px-4 py-2 font-bold text-gray-700 hover:bg-gray-300">
             Upload File
