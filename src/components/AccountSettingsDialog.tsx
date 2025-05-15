@@ -11,7 +11,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-// No need to import useTheme explicitly if only using Tailwind dark variants
 
 interface AccountSettingsDialogProps {
   open: boolean;
@@ -21,13 +20,14 @@ interface AccountSettingsDialogProps {
 
 interface DecodedToken {
   email?: string;
-  // Add other properties from your token if needed
 }
 
 function AccountSettingsDialog({ open, setOpen, username }: AccountSettingsDialogProps) {
   const [email, setEmail] = useState("");
-  const [isEditingUsername, setIsEditingUsername] = useState(false); // State to track if username is being edited
-  const [editableUsername, setEditableUsername] = useState(username); // State for the editable username input
+  const [isEditingUsername, setIsEditingUsername] = useState(false);
+  const [editableUsername, setEditableUsername] = useState(username);
+  const [newPassword, setNewPassword] = useState(""); // State for the new password
+  const [isEditingPassword, setIsEditingPassword] = useState(false); // State to track if password is being edited
   const { toast } = useToast();
 
   useEffect(() => {
@@ -40,7 +40,6 @@ function AccountSettingsDialog({ open, setOpen, username }: AccountSettingsDialo
         }
       } catch (error) {
         console.error("Failed to decode token:", error);
-        // Optionally, handle the error, e.g., show a toast message
       }
     }
   }, []);
@@ -50,20 +49,88 @@ function AccountSettingsDialog({ open, setOpen, username }: AccountSettingsDialo
     return emailRegex.test(email);
   };
 
-  const handleSaveEmail = () => {
-    if (isValidEmail(email)) {
-      // Save email logic here
+  const updateUserField = async (field: string, value: string) => {
+    const userId = sessionStorage.getItem("userId");
+    const token = sessionStorage.getItem("token");
+
+    if (!userId) {
       toast({
-        title: "Success",
-        description: "Email saved successfully.",
+        title: "Error",
+        description: "User ID not found in session storage.",
+        variant: "destructive",
       });
-    } else {
+      return;
+    }
+
+    if (!token) {
+      toast({
+        title: "Error",
+        description: "Token not found in session storage.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:8080/admin/users/${userId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ [field]: value }),
+      });
+
+      if (response.ok) {
+        toast({
+          title: "Success",
+          description: `${field.charAt(0).toUpperCase() + field.slice(1)} updated successfully.`,
+        });
+        if (field === "username") setIsEditingUsername(false);
+      } else {
+        const errorData = await response.json();
+        toast({
+          title: "Error",
+          description: errorData.message || `Failed to update ${field}.`,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error(`Error updating ${field}:`, error);
+      toast({
+        title: "Error",
+        description: `An error occurred while updating the ${field}.`,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleSaveUsername = () => {
+    updateUserField("username", editableUsername);
+  };
+
+  const handleSaveEmail = () => {
+    if (!isValidEmail(email)) {
       toast({
         title: "Error",
         description: "Please enter a valid email address.",
         variant: "destructive",
       });
+      return;
     }
+    updateUserField("email", email);
+  };
+
+  const handleChangePassword = (newPassword: string) => {
+    if (!newPassword || newPassword.length < 6) {
+      toast({
+        title: "Error",
+        description: "Password must be at least 6 characters long.",
+        variant: "destructive",
+      });
+      return;
+    }
+    updateUserField("password", newPassword);
   };
 
   return (
@@ -76,7 +143,6 @@ function AccountSettingsDialog({ open, setOpen, username }: AccountSettingsDialo
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          {/* Apply dark mode text color to labels */}
           <div className="grid grid-cols-4 items-center gap-4">
             <label htmlFor="name" className="text-right text-sm font-medium leading-none text-foreground">
               Username
@@ -87,7 +153,7 @@ function AccountSettingsDialog({ open, setOpen, username }: AccountSettingsDialo
                   id="username"
                   value={editableUsername}
                   onChange={(e) => setEditableUsername(e.target.value)}
-                  className="col-span-2" // Adjust column span as needed
+                  className="col-span-2"
                 />
               ) : (
                 <p className="text-foreground" style={{ fontSize: username.length > 13 ? '0.8rem' : '1rem' }}>
@@ -96,8 +162,23 @@ function AccountSettingsDialog({ open, setOpen, username }: AccountSettingsDialo
               )}
               {isEditingUsername ? (
                 <>
-                  <Button variant="outline" size="sm" onClick={() => { /* Save logic here */ setIsEditingUsername(false); }}>Save</Button>
-                  <Button variant="secondary" size="sm" onClick={() => { setEditableUsername(username); setIsEditingUsername(false); }}>Cancel</Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleSaveUsername}
+                  >
+                    Save
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => {
+                      setEditableUsername(username);
+                      setIsEditingUsername(false);
+                    }}
+                  >
+                    Cancel
+                  </Button>
                 </>
               ) : (
                 <Button variant="outline" onClick={() => setIsEditingUsername(true)}>Change username</Button>
@@ -109,9 +190,48 @@ function AccountSettingsDialog({ open, setOpen, username }: AccountSettingsDialo
               Password
             </label>
             <div className="col-span-3 flex items-center justify-between">
-              {/* Apply dark mode text color to paragraph */}
-              <p className="text-foreground">********</p>
-              <Button variant="outline">Change password</Button>
+              {isEditingPassword ? (
+                <div className="flex flex-col w-full">
+                  <Input
+                    type="password"
+                    id="newPassword"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="Enter new password"
+                    className="mb-2"
+                  />
+                  <div className="flex justify-end gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        handleChangePassword(newPassword);
+                        setIsEditingPassword(false);
+                        setNewPassword("");
+                      }}
+                    >
+                      Save
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => {
+                        setIsEditingPassword(false);
+                        setNewPassword("");
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <p className="text-foreground">********</p>
+                  <Button variant="outline" onClick={() => setIsEditingPassword(true)}>
+                    Change password
+                  </Button>
+                </>
+              )}
             </div>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
@@ -119,7 +239,6 @@ function AccountSettingsDialog({ open, setOpen, username }: AccountSettingsDialo
               Email address
             </label>
             <div className="col-span-3">
-              {/* Input and Button from shadcn/ui should handle theming automatically */}
               <Input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} className="mb-2" />
               <div className="flex justify-end">
                 <Button variant="outline" onClick={handleSaveEmail}>Save email</Button>
@@ -131,7 +250,6 @@ function AccountSettingsDialog({ open, setOpen, username }: AccountSettingsDialo
               Connected accounts
             </label>
             <div className="col-span-3">
-              {/* Button from shadcn/ui should handle theming automatically */}
               <Button variant="link">+ Connect account</Button>
             </div>
           </div>
