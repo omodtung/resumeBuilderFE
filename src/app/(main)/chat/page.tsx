@@ -99,7 +99,7 @@ const ChatPage = () => {
             setMessages((prevMessages) => [
               ...prevMessages,
               {
-                text: result.response || "No response from AI.",
+                text: result.query || "No response from AI.",
                 sender: 'ai',
               },
             ]);
