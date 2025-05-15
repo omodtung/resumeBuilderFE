@@ -13,7 +13,6 @@ import { useLoginModal } from "@/context/LoginModalContext";
 import LoginModal from "@/components/LoginModal";
 import { useRouter } from "next/navigation";
 
-
 export default function Page() {
   const [resumes, setResumes] = useState<ResumeServerData[]>([]);
   const { setIsLoginModalOpen } = useLoginModal();
@@ -53,9 +52,14 @@ export default function Page() {
 
   return (
     <main className="mx-auto w-full max-w-7xl space-y-6 px-3 py-6">
-      <div className="flex gap-4 justify-center">
-        <NewResumeButton type="blank" buttonText="New Blank Resume" />
-        <NewResumeButton type="template" buttonText="New Template Resume" />
+      <div className="flex flex-col items-center">
+        <div className="flex gap-2 justify-center mb-2">
+          <NewResumeButton type="blank" buttonText="New Blank Resume" />
+          <NewResumeButton type="template" buttonText="New Template Resume" />
+        </div>
+        <Link href="/chat">
+          <Button className="mt-0">Chat with AI</Button>
+        </Link>
       </div>
       <div className="flex w-full grid-cols-2 flex-col gap-3 sm:grid md:grid-cols-3 lg:grid-cols-4">
         {resumes.map((resume) => (
