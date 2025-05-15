@@ -18,6 +18,7 @@ const ChatPage = () => {
   ]);
   const [input, setInput] = useState('');
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [isWaitingForResponse, setIsWaitingForResponse] = useState(false);
   const { theme } = useTheme();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,13 +28,27 @@ const ChatPage = () => {
   const handleSendMessage = async () => {
     if (input.trim() !== '' || uploadedFile) {
       const newMessages = [...messages, { text: input, sender: 'user' }];
+      setMessages(newMessages); // Immediately set the user's message
+      setInput('');
+      setIsWaitingForResponse(true); // Disable input and upload
+
       if (uploadedFile) {
         const fileType = uploadedFile.type;
         const isImage = fileType.startsWith('image/');
-        const token = sessionStorage.getItem('token'); // Get token from session storage
+        const fileMessage = {
+          text: isImage ? URL.createObjectURL(uploadedFile) : `Uploaded file: ${uploadedFile.name}`,
+          sender: 'user',
+          isFile: true,
+          isImage,
+        };
 
+        setMessages((prevMessages) => [...prevMessages, fileMessage]); // Add file/image to messages immediately
+        setUploadedFile(null);
+
+        const token = sessionStorage.getItem('token'); // Get token from session storage
         if (!token) {
           console.error("No token found in session storage.");
+          setIsWaitingForResponse(false);
           return;
         }
 
@@ -49,33 +64,7 @@ const ChatPage = () => {
             body: formData,
           });
 
-          if (response.ok) {
-            const result = await response.json();
-            console.log("File sent successfully:", result);
-
-            if (isImage) {
-              const reader = new FileReader();
-              reader.onloadend = () => {
-                newMessages.push({
-                  text: reader.result as string,
-                  sender: 'user',
-                  isFile: true,
-                  isImage: true,
-                });
-                setMessages(newMessages);
-                setInput('');
-                setUploadedFile(null);
-              };
-              reader.readAsDataURL(uploadedFile);
-              return;
-            } else {
-              newMessages.push({
-                text: `Uploaded file: ${uploadedFile.name}`,
-                sender: 'user',
-                isFile: true,
-              });
-            }
-          } else {
+          if (!response.ok) {
             console.error("Failed to send file:", response.statusText);
           }
         } catch (error) {
@@ -85,9 +74,9 @@ const ChatPage = () => {
 
       if (input.trim() !== '') {
         const userId = sessionStorage.getItem('userId'); // Get userId from session storage
-
         if (!userId) {
           console.error("No userId found in session storage.");
+          setIsWaitingForResponse(false);
           return;
         }
 
@@ -99,7 +88,7 @@ const ChatPage = () => {
             },
             body: JSON.stringify({
               query: input,
-              userId, // Use userId from session storage
+              userId: userId,
             }),
           });
 
@@ -107,10 +96,13 @@ const ChatPage = () => {
             const result = await response.json();
             console.log("AI response:", result);
 
-            newMessages.push({
-              text: result.response || "No response from AI.",
-              sender: 'ai',
-            });
+            setMessages((prevMessages) => [
+              ...prevMessages,
+              {
+                text: result.response || "No response from AI.",
+                sender: 'ai',
+              },
+            ]);
           } else {
             console.error("Failed to send message:", response.statusText);
           }
@@ -119,9 +111,7 @@ const ChatPage = () => {
         }
       }
 
-      setMessages(newMessages);
-      setInput('');
-      setUploadedFile(null);
+      setIsWaitingForResponse(false); // Re-enable input and upload
     }
   };
 
@@ -187,24 +177,27 @@ const ChatPage = () => {
             value={input}
             onChange={handleInputChange}
             onKeyDown={(e) => {
-              if (e.key === 'Enter') {
+              if (e.key === 'Enter' && !isWaitingForResponse) {
                 e.preventDefault();
                 handleSendMessage();
               }
             }}
+            disabled={isWaitingForResponse}
           />
           <button
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-r-md"
             onClick={handleSendMessage}
+            disabled={isWaitingForResponse}
           >
             Gửi
           </button>
-          <label className="ml-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded-md cursor-pointer">
+          <label className={`ml-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded-md cursor-pointer ${isWaitingForResponse ? 'opacity-50 cursor-not-allowed' : ''}`}>
             Upload File
             <input
               type="file"
               className="hidden"
               onChange={handleFileUpload}
+              disabled={isWaitingForResponse}
             />
           </label>
         </div>
