@@ -84,6 +84,13 @@ const ChatPage = () => {
       }
 
       if (input.trim() !== '') {
+        const userId = sessionStorage.getItem('userId'); // Get userId from session storage
+
+        if (!userId) {
+          console.error("No userId found in session storage.");
+          return;
+        }
+
         try {
           const response = await fetch('http://localhost:8080/api/agentAI/reviewCv', {
             method: 'POST',
@@ -92,7 +99,7 @@ const ChatPage = () => {
             },
             body: JSON.stringify({
               query: input,
-              userId: '13', // Temporary userId
+              userId, // Use userId from session storage
             }),
           });
 
