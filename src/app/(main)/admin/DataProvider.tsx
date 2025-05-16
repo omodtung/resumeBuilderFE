@@ -60,6 +60,10 @@ export const dataProvider: DataProvider = {
                 ? 'users-pagi'
                 : resource === 'resumes'
                 ? 'resumes-filter'
+                : resource === 'work_experiences'
+                ? 'workExperience-filter'
+                : resource === 'educations'
+                ? 'educations-filter'
                 : resource
             }?page=${page}&limit=${perPage}&filter=${filter}&sort=${sort}&order=${order}`;
         }
@@ -83,7 +87,14 @@ export const dataProvider: DataProvider = {
             data = response;
             total = Array.isArray(response) ? response.length : 0;
         } else {
-             data = response.data;
+             if (resource === 'resumes') {
+                data = response.data.map((item: any) => ({
+                    ...item,
+                    photo: item.photoUrl ? item.photoUrl : null,
+                }));
+            } else {
+                data = response.data;
+            }
              total = response.totalItems;
         }
 

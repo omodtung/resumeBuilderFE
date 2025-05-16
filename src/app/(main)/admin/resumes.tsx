@@ -1,4 +1,4 @@
-import { List, Datagrid, TextField, EmailField, DateField, BooleanField, EditButton, DeleteButton, SearchInput, TextInput, Filter } from 'react-admin';
+import { List, Datagrid, TextField, EmailField, DateField, BooleanField, EditButton, DeleteButton, SearchInput, TextInput, Filter, ImageField } from 'react-admin';
 import { useLocation } from 'react-router-dom';
 
 const ResumeFilter = () => {
@@ -24,6 +24,23 @@ const resumeFilters = [
     <TextInput source="email" defaultValue="" />,
 ];
 
+const AvatarField = (props: any) => {
+    if (!props.record.photo) {
+        return null;
+    }
+
+    return (
+        <ImageField
+            {...props}
+            source="photo"
+            sx={{
+                "& img": { maxWidth: "80px", maxHeight: "80px", objectFit: "cover" },
+            }}
+            transform={(value: string) => `http://localhost:8080/images/avatar/${value}`}
+        />
+    );
+};
+
 export const ResumeList = () => {
     const location = useLocation();
     const userValuesIdsString = new URLSearchParams(location.search).get('userValuesIds');
@@ -33,6 +50,7 @@ export const ResumeList = () => {
         <List filters={userValuesIds.length > 0 ? [<ResumeFilter />] : resumeFilters}>
             <Datagrid rowClick={false}>
                 <TextField source="id" />
+                <AvatarField source="photo" label="Photo" />
                 <TextField source="title" />
                 <TextField source="description" />
                 <TextField source="firstName" />
