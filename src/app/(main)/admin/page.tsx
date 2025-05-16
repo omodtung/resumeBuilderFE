@@ -27,6 +27,8 @@ import EducationEdit from './edits/EducationEdit';
 import EducationCreate from './edits/EducationCreate';
 import customAuthProvider from "./AuthProvider";
 import LoginPage from "./LoginPage"; // Import the LoginPage component
+import CustomMenu from "./CustomMenu"; // Import the custom menu
+import CustomLayout from "./CustomLayout"; // Import the custom layout
 
 function AdminPage() {
   const [isClient, setIsClient] = useState(false);
@@ -58,18 +60,13 @@ function AdminPage() {
     <>
       {isClient ? (
         <div className="relative">
-          {/* <button
-            onClick={handleLogout}
-            className="absolute top-1 right-24 z-10 px-4 py-2 bg-red-500 text-white rounded cursor-pointer flex items-center"
-          >
-            Logout
-          </button> */}
           <Admin
             loginPage={LoginWithEmail}
             dataProvider={dataProvider}
             authProvider={customAuthProvider}
             theme={lightTheme}
             darkTheme={darkTheme}
+            layout={CustomLayout} // Use the custom layout
           >
             <Resource name="users" list={UserList} edit={UserEdit} create={UserCreate} />
             <Resource name="user_subscriptions" list={UserSubscriptionList} edit={UserSubscriptionEdit} />
