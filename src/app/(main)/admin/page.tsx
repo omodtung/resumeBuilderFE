@@ -7,6 +7,9 @@ import { UserList } from './users';
 import UserEdit from './edits/userEdit';
 import UserCreate from './edits/UserCreate';
 import ResumeCreate from './edits/ResumeCreate';
+import { JobList } from './jobs';
+import JobEdit from './edits/JobEdit';
+import JobCreate from './edits/JobCreate';
 import { ResumeList } from './resumes';
 import UserSubscriptionList from './UserSubscriptionList';
 import ResumeEdit from './edits/ResumeEdit';
@@ -59,7 +62,7 @@ function AdminPage() {
   return (
     <>
       {isClient ? (
-        <div className="relative">
+        <div className="relative" >
           <Admin
             loginPage={LoginWithEmail}
             dataProvider={dataProvider}
@@ -74,6 +77,7 @@ function AdminPage() {
             <Resource name="plans" list={PlanList} edit={PlanEdit} create={PlanCreate} />
             <Resource name="work_experience" list={WorkExperienceList} edit={WorkExperienceEdit} create={WorkExperienceCreate} />
             <Resource name="educations" list={EducationList} edit={EducationEdit} create={EducationCreate} />
+            <Resource name="jobs" list={JobList} edit={JobEdit} create={JobCreate} />
             <CustomRoutes>
               <Route path="users/resumes/:userId" element={<UserResumesList />} />
               <Route path="user/user-subscription-follow-userId/:userId" element={<UserSubscriptionListByUser />} />

@@ -24,20 +24,33 @@ const resumeFilters = [
     <TextInput source="email" defaultValue="" />,
 ];
 
-const AvatarField = (props: any) => {
-    if (!props.record || !props.record.photo) {
-        return null; // Return nothing if record or photo is undefined
+import { useRecordContext } from 'react-admin';
+
+const AvatarImage = ({ source }: { source: string }) => {
+    const record = useRecordContext();
+    const photoUrl = record && record[source];
+
+    if (!photoUrl) {
+        return null;
     }
 
+    const imageUrl = `http://localhost:8080/images/avatar/${photoUrl}`;
+
     return (
-        <ImageField
-            {...props}
-            source="photo"
-            sx={{
-                "& img": { maxWidth: "80px", maxHeight: "80px", objectFit: "cover" },
+        <img
+            src={imageUrl}
+            style={{
+                maxWidth: "80px",
+                maxHeight: "80px",
+                objectFit: "cover",
             }}
-            transform={(value: string) => `http://localhost:8080/images/avatar/${value}`}
         />
+    );
+};
+
+const AvatarField = (props: any) => {
+    return (
+        <AvatarImage source="photoUrl" />
     );
 };
 
@@ -49,8 +62,9 @@ export const ResumeList = () => {
     return (
         <List filters={userValuesIds.length > 0 ? [<ResumeFilter />] : resumeFilters}>
             <Datagrid rowClick={false}>
+                
                 <TextField source="id" />
-                <AvatarField source="photo" label="Photo" />
+                <AvatarField source="photoUrl" label="Photo" />
                 <TextField source="title" />
                 <TextField source="description" />
                 <TextField source="firstName" />

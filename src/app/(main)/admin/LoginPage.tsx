@@ -49,7 +49,7 @@ const LoginPage = () => {
 
   return (
     <div className="flex items-center justify-center h-screen bg-gray-100">
-      <div className="bg-white p-6 rounded shadow-md w-full max-w-sm">
+      <div className="bg-white p-6 rounded shadow-md w-full max-w-sm" suppressHydrationWarning>
         <h1 className="text-xl font-semibold mb-4">Admin Login</h1>
         <div className="mb-4">
           <label htmlFor="email" className="block text-sm font-medium text-gray-700">

@@ -90,14 +90,14 @@ export const dataProvider: DataProvider = {
              if (resource === 'resumes') {
                 data = response.data.map((item: any) => ({
                     ...item,
-                    photo: item.photoUrl ? item.photoUrl : null,
+                    photoUrl: item.photoUrl || null,
                 }));
             } else {
                 data = response.data;
             }
              total = response.totalItems;
         }
-
+        
         return {
             data: data,
             total: total,
