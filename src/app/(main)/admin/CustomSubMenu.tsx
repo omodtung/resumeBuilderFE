@@ -8,7 +8,7 @@ import {
   Tooltip,
 } from "@mui/material";
 import ExpandMore from "@mui/icons-material/ExpandMore";
-import { useTranslate, useSidebarState } from "react-admin";
+import { useSidebarState } from "react-admin";
 
 interface Props {
   dense: boolean;
@@ -21,14 +21,26 @@ interface Props {
 
 const CustomSubMenu = (props: Props) => {
   const { handleToggle, isOpen, name, icon, children, dense } = props;
-  const translate = useTranslate();
   const [sidebarIsOpen] = useSidebarState();
 
   const header = (
-    <MenuItem dense={dense} onClick={handleToggle}>
-      <ListItemIcon sx={{ minWidth: 5 }}>{isOpen ? <ExpandMore /> : icon}</ListItemIcon>
-      <Typography variant="inherit" color="textSecondary">
-        {translate(name)}
+    <MenuItem
+      dense={dense}
+      onClick={handleToggle}
+      sx={{
+        paddingLeft: sidebarIsOpen ? 2 : 1,
+        "&.Mui-selected": {
+          backgroundColor: "rgba(0, 0, 0, 0.08)", // Highlight color
+        },
+      }}
+    >
+      <ListItemIcon sx={{ minWidth: 40 }}>{isOpen ? <ExpandMore /> : icon}</ListItemIcon>
+      <Typography
+        variant="inherit"
+        color="textSecondary"
+        noWrap // Prevent text overflow
+      >
+        {name}
       </Typography>
     </MenuItem>
   );
@@ -38,7 +50,7 @@ const CustomSubMenu = (props: Props) => {
       {sidebarIsOpen || isOpen ? (
         header
       ) : (
-        <Tooltip title={translate(name)} placement="right">
+        <Tooltip title={name} placement="right">
           {header}
         </Tooltip>
       )}
@@ -51,7 +63,7 @@ const CustomSubMenu = (props: Props) => {
             "& .MuiMenuItem-root": {
               transition: "padding-left 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms",
               paddingLeft: (theme) =>
-                sidebarIsOpen ? theme.spacing(4) : theme.spacing(2),
+                sidebarIsOpen ? theme.spacing(4) : theme.spacing(1),
             },
           }}
         >

@@ -31,7 +31,7 @@ const CustomMenu = ({ dense = false }: MenuProps) => {
   return (
     <Box
       sx={{
-        width: open ? 250 : 70, // Increased width to fit "Work Experience"
+        width: open ? 250 : 60, // Increased width to fit "Work Experience"
         marginTop: 1,
         marginBottom: 1,
         transition: (theme) =>
@@ -59,6 +59,7 @@ const CustomMenu = ({ dense = false }: MenuProps) => {
           primaryText="Users"
           leftIcon={<PeopleIcon />}
           dense={dense}
+          sx={{ paddingLeft: 1 }}
         />
         <MenuItemLink
           to="/user_subscriptions"
@@ -66,6 +67,7 @@ const CustomMenu = ({ dense = false }: MenuProps) => {
           primaryText="User Subscriptions"
           leftIcon={<PeopleIcon />}
           dense={dense}
+          sx={{ paddingLeft: 1 }}
         />
       </CustomSubMenu>
       <CustomSubMenu

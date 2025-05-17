@@ -25,8 +25,8 @@ const resumeFilters = [
 ];
 
 const AvatarField = (props: any) => {
-    if (!props.record.photo) {
-        return null;
+    if (!props.record || !props.record.photo) {
+        return null; // Return nothing if record or photo is undefined
     }
 
     return (
