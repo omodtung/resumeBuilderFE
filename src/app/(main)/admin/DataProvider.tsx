@@ -66,6 +66,8 @@ export const dataProvider: DataProvider = {
                 ? 'workExperience-filter'
                 : resource === 'educations'
                 ? 'education-filter'
+                : resource === 'jobs'
+                ? 'jobs-filter'
                 : resource
             }?page=${page}&limit=${perPage}&filter=${filter}&sort=${sort}&order=${order}`;
         }
