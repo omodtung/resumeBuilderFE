@@ -53,7 +53,7 @@ export const dataProvider: DataProvider = {
              apiUrl = `http://localhost:8080/user/user-subscription-follow-userId`; // user subscriptions by user id
         }
         else {
-            apiUrl = `${resource === 'user_subscriptions' ? 'http://localhost:8080/user' : API_URL}/${
+            apiUrl = `${resource === 'user_subscriptions' ? 'http://localhost:8080/admin' : API_URL}/${
               resource === 'plans'
                 ? 'plans-filter'
                 : resource === 'user_subscriptions'
