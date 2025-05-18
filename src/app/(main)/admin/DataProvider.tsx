@@ -10,6 +10,8 @@ export const dataProvider: DataProvider = {
         let sort = params.sort?.field ?? '';
         let order = params.sort?.order ?? 'ASC';
         let filter = params.filter ?? '';
+        sort = sort === '' ? " " : sort;
+        filter = filter === '' ? " " : filter;
         sort = sort === 'id' ? '' : sort; //bypass sort id error
         
 
@@ -60,10 +62,10 @@ export const dataProvider: DataProvider = {
                 ? 'users-pagi'
                 : resource === 'resumes'
                 ? 'resumes-filter'
-                : resource === 'work_experiences'
+                : resource === 'work_experience'
                 ? 'workExperience-filter'
                 : resource === 'educations'
-                ? 'educations-filter'
+                ? 'education-filter'
                 : resource
             }?page=${page}&limit=${perPage}&filter=${filter}&sort=${sort}&order=${order}`;
         }
