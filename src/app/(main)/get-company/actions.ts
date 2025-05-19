@@ -1,6 +1,6 @@
 "use server";
 
-export async function uploadCV(formData: FormData, token: string | null) {
+export async function uploadCV(formData: FormData, token: string | null, userId: string | null) {
   const cvFile = formData.get('cvFile') as File;
 
   console.log('Received upload request for Get Company:');
@@ -12,9 +12,8 @@ export async function uploadCV(formData: FormData, token: string | null) {
   // First fetch: Send query and userId
   let queryResponseData: any = null;
   try {
-    const userId = sessionStorage.getItem('userId');
     if (!userId) {
-      console.error('User ID not found in session storage.');
+      console.error('User ID was not provided.');
       return { success: false, error: 'User ID is missing.', step: 'userId' };
     }
 

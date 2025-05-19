@@ -31,13 +31,14 @@ const GetCompanyPage = () => {
 
     try {
       const token = sessionStorage.getItem('token');
-      if (!token) {
-        alert('Authentication token is missing. Please log in.');
+      const userId = sessionStorage.getItem('userId');
+      if (!token || !userId) {
+        alert('Authentication token or user ID is missing. Please log in.');
         setIsUploading(false);
         return;
       }
 
-      const result = await uploadCV(formData, token);
+      const result = await uploadCV(formData, token, userId);
       if (result.success) {
         setUploadSuccess(true);
         setCompanyName(result.data); // Set the company name
