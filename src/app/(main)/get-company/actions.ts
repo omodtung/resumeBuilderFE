@@ -79,7 +79,7 @@ export async function uploadCV(formData: FormData, token: string | null, userId:
     }
 
     console.log('File uploaded successfully.');
-    return { success: true, data: queryResponseData.companyName || 'Unknown Company' }; // Return company name
+    return { success: true, data: queryResponseData.query || 'No query response' }; // Return query
   } catch (error: any) {
     console.error('Error during file upload operation:', error);
     return { success: false, error: error.message || 'Unknown file upload error', step: 'fileUpload' };

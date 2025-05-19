@@ -8,7 +8,7 @@ const GetCompanyPage = () => {
   const [cvFile, setCvFile] = useState<File | null>(null);
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [companyName, setCompanyName] = useState<string | null>(null); // State for company name
+  const [queryResponse, setQueryResponse] = useState<string | null>(null); // State for query response
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -24,7 +24,7 @@ const GetCompanyPage = () => {
 
     setIsUploading(true);
     setUploadSuccess(false);
-    setCompanyName(null);
+    setQueryResponse(null);
 
     const formData = new FormData();
     formData.append('cvFile', cvFile);
@@ -41,7 +41,7 @@ const GetCompanyPage = () => {
       const result = await uploadCV(formData, token, userId);
       if (result.success) {
         setUploadSuccess(true);
-        setCompanyName(result.data); // Set the company name
+        setQueryResponse(result.data); // Set the query response
       } else {
         alert(`Upload failed: ${result.error || 'Unknown error'}`);
       }
@@ -113,9 +113,9 @@ const GetCompanyPage = () => {
           {isUploading ? 'Uploading...' : 'Submit'}
         </button>
 
-        {uploadSuccess && companyName && (
+        {uploadSuccess && queryResponse && (
           <div className="mt-4 p-3 bg-green-100 text-green-700 rounded-md">
-            * File successfully uploaded. Detected company: <strong>{companyName}</strong>.
+            * File successfully uploaded. Query response: <strong>{queryResponse}</strong>.
           </div>
         )}
 
