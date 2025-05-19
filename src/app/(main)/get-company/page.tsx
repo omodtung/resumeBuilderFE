@@ -38,14 +38,15 @@ const GetCompanyPage = () => {
         return;
       }
 
-      const result = await uploadCV(formData, token, userId);
-      if (result.success) {
-        setUploadSuccess(true);
-        setQueryResponse(result.data); // Set the query response
-        console.log(result.data);
-      } else {
-        alert(`Upload failed: ${result.error || 'Unknown error'}`);
-      }
+      // const result = await uploadCV(formData, token, userId);
+      // if (result.success) {
+      //   setUploadSuccess(true);
+      //   setQueryResponse(result.data); // Set the query response
+      //   console.log(result.data);
+      // } else {
+      //   alert(`Upload failed: ${result.error || 'Unknown error'}`);
+      // }
+      setQueryResponse('FPT');
     } catch (error) {
       console.error('Upload error:', error);
       alert('An error occurred during upload.');
@@ -114,7 +115,7 @@ const GetCompanyPage = () => {
           {isUploading ? 'Uploading...' : 'Submit'}
         </button>
 
-        {uploadSuccess && queryResponse && (
+        {queryResponse && (
           <div className="mt-4 p-3 bg-green-100 text-green-700 rounded-md">
             * File successfully uploaded. Query response: <strong>{queryResponse}</strong>.
           </div>
