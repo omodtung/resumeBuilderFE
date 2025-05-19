@@ -53,7 +53,7 @@ export async function uploadCV(formData: FormData, token: string | null, userId:
     }
 
     const fileUploadFormData = new FormData();
-    fileUploadFormData.append('cvFile', cvFile, cvFile.name);
+    fileUploadFormData.append('File', cvFile, cvFile.name);
 
     console.log(`Attempting to upload file to: ${fileUploadUrl}`);
     const fileResponse = await fetch(fileUploadUrl, {
