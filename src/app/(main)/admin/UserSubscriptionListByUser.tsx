@@ -10,7 +10,9 @@ export const UserSubscriptionListByUser = () => {
                 <TextField source="id" />
                 <TextField source="stripeCustomerId" />
                 <TextField source="stripeSubscriptionId" />
+                <TextField source="stripePriceId" />
                 <BooleanField source="stripeCancelAtPeriodEnd" label="Cancel At Period End" />
+                <BooleanField source="isActive" label="Active" />
                 <FunctionField
                     label="Current Period End"
                     render={record => {
@@ -19,6 +21,8 @@ export const UserSubscriptionListByUser = () => {
                         return date.toLocaleDateString();
                     }}
                 />
+                <DateField source="createdAt" label="Created At" />
+                <DateField source="updatedAt" label="Updated At" />
                 <TextField source="user.username" label="Username" />
                 <TextField source="plan.plansName" label="Plan Name" />
                 <EditButton />
