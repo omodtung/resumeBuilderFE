@@ -53,7 +53,7 @@ export async function uploadCV(formData: FormData, token: string | null, userId:
     }
 
     const fileUploadFormData = new FormData();
-    fileUploadFormData.append('File', cvFile, cvFile.name); // Include "File" key in the body
+    fileUploadFormData.append("File", cvFile, cvFile.name); // Include "File" key in the body
 
     console.log(`Attempting to upload file to: ${fileUploadUrl}`);
     console.log('File upload request details:', {
