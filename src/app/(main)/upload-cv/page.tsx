@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { uploadCV } from './actions';
 
 const UploadCVPage = () => {
@@ -82,6 +83,9 @@ const UploadCVPage = () => {
               <option value="VETTEL">VETTEL</option>
             </select>
           </div>
+          <Link href="/get-company" className="text-blue-500 hover:underline mt-2 inline-block">
+            Không biết chọn công ty? Nhấn vào đây để tìm kiếm.
+          </Link>
         </div>
 
         <div className="mb-4">

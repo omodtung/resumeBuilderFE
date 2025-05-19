@@ -83,6 +83,7 @@ const LoginPage = () => {
           className={`w-full px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-200 ${
             isLoading ? "opacity-50 cursor-not-allowed" : ""
           }`}
+          suppressHydrationWarning
         >
           {isLoading ? "Logging in..." : "Login"}
         </button>

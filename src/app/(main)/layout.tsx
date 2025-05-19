@@ -18,7 +18,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col" suppressHydrationWarning>
       {/* Only render Navbar if mounted and not admin page */}
-      {hasMounted && !isAdminPage && <Navbar />}
+      {!isAdminPage && <Navbar />}
       <SubscriptionLevelProvider userSubscriptionLevel="free">
         {children}
       </SubscriptionLevelProvider>
