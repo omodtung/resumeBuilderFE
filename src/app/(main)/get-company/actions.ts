@@ -53,9 +53,17 @@ export async function uploadCV(formData: FormData, token: string | null, userId:
     }
 
     const fileUploadFormData = new FormData();
-    fileUploadFormData.append('File', cvFile, cvFile.name);
+    fileUploadFormData.append('File', cvFile, cvFile.name); // Include "File" key in the body
 
     console.log(`Attempting to upload file to: ${fileUploadUrl}`);
+    console.log('File upload request details:', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: fileUploadFormData,
+    });
+
     const fileResponse = await fetch(fileUploadUrl, {
       method: 'POST',
       headers: {
