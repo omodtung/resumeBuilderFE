@@ -13,8 +13,9 @@ import WorkIcon from "@mui/icons-material/Work";
 import SchoolIcon from "@mui/icons-material/School";
 import DescriptionIcon from "@mui/icons-material/Description"; // Icon for resumes
 import BusinessCenterIcon from "@mui/icons-material/BusinessCenter"; // Icon for jobs
+import PaymentIcon from "@mui/icons-material/Payment"; // Icon for plans
 
-type MenuName = "menuUsers" | "menuWorkExperience" | "menuEducation" | "menuResumes" | "menuJobs";
+type MenuName = "menuUsers" | "menuWorkExperience" | "menuEducation" | "menuResumes" | "menuJobs" | "menuPlans";
 
 const CustomMenu = ({ dense = false }: MenuProps) => {
   const [state, setState] = useState({
@@ -22,7 +23,8 @@ const CustomMenu = ({ dense = false }: MenuProps) => {
     menuWorkExperience: false,
     menuEducation: false,
     menuResumes: false,
-    menuJobs: false, // Add state for jobs
+    menuJobs: false,
+    menuPlans: false, // Add state for plans
   });
   const [open] = useSidebarState();
 
@@ -129,6 +131,21 @@ const CustomMenu = ({ dense = false }: MenuProps) => {
           state={{ _scrollToTop: true }}
           primaryText="Jobs"
           leftIcon={<BusinessCenterIcon />}
+          dense={dense}
+        />
+      </CustomSubMenu>
+      <CustomSubMenu
+        handleToggle={() => handleToggle("menuPlans")}
+        isOpen={state.menuPlans}
+        name="Plans"
+        icon={<PaymentIcon />}
+        dense={dense}
+      >
+        <MenuItemLink
+          to="/plans"
+          state={{ _scrollToTop: true }}
+          primaryText="Plans"
+          leftIcon={<PaymentIcon />}
           dense={dense}
         />
       </CustomSubMenu>
