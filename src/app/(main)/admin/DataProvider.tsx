@@ -50,7 +50,7 @@ export const dataProvider: DataProvider = {
             apiUrl = `${API_URL}/users/resumes/${userId}?page=${page}&limit=${perPage}&filter=${filter}&sort=${sort}&order=${order}`; //user resumes
         } else if (resource.startsWith('user/user-subscription-follow-userId/')) {
              const userId = resource.split('/')[2];
-             apiUrl = `http://localhost:8080/user/user-subscription-follow-userId`; // user subscriptions by user id
+             apiUrl = `http://localhost:8080/admin/user-subscription-follow-userId`; // user subscriptions by user id
         }
         else {
             apiUrl = `${resource === 'user_subscriptions' ? 'http://localhost:8080/admin' : API_URL}/${
