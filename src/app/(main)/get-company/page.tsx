@@ -42,6 +42,7 @@ const GetCompanyPage = () => {
       if (result.success) {
         setUploadSuccess(true);
         setQueryResponse(result.data); // Set the query response
+        console.log(result.data);
       } else {
         alert(`Upload failed: ${result.error || 'Unknown error'}`);
       }

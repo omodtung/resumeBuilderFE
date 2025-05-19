@@ -10,12 +10,7 @@ const ChatPage = () => {
     isFile?: boolean;
     isImage?: boolean;
   }
-  const [messages, setMessages] = useState<Message[]>([
-    { text: "Tôi sẽ giúp bạn tìm kiếm các công ty có tên chứa ký tự 'GG' trong dữ liệu đã cung cấp. Sau khi kiểm tra, tôi thấy rằng có một công ty có tên chứa ký tự 'GG' là: * Lazada Việt Nam (ID: 4) Vậy là kết quả tìm kiếm của tôi cho câu hỏi này là chỉ có một công ty có tên chứa ký tự 'GG'.", sender: "ai" },
-    { text: "Hãy tìm kiếm giúp tôi các công ty có tên chứa ký tự GG", sender: "user" },
-    { text: "Có thể liệt kê tên các công ty trong hệ thống của bạn được không ?", sender: "user" },
-    { text: "Có, dưới đây là danh sách các công ty đã được liệt kê trong hệ thống: 1. Amazon.com, Inc. 2. Apple Inc. 3. Google LLC 4. Lazada Việt Nam 5. Netflix Inc (đã được cập nhật) 6. Adobe Photoshop 7. Táºp Ä'oÃ n Adobe 8. Shopee 9. Tiki 10. Tiktok ", sender: "ai" },
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [isWaitingForResponse, setIsWaitingForResponse] = useState(false);
@@ -73,9 +68,10 @@ const ChatPage = () => {
       }
 
       if (input.trim() !== '') {
+        const token = sessionStorage.getItem('token'); // Get token from session storage
         const userId = sessionStorage.getItem('userId'); // Get userId from session storage
-        if (!userId) {
-          console.error("No userId found in session storage.");
+        if (!token || !userId) {
+          console.error("No token or userId found in session storage.");
           setIsWaitingForResponse(false);
           return;
         }
@@ -85,6 +81,7 @@ const ChatPage = () => {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`, // Add Bearer token
             },
             body: JSON.stringify({
               query: input,
