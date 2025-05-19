@@ -88,7 +88,7 @@ const LoginModal = forwardRef<HTMLButtonElement, LoginModalProps>(
 
     return (
       <Dialog open={isLoginModalOpen} onOpenChange={setIsLoginModalOpen}>
-        <div style={{ display: "flex" }}>
+        <div style={{ display: "flex" }} suppressHydrationWarning>
           <DialogTrigger asChild>
             <Button
               ref={ref}
@@ -115,7 +115,7 @@ const LoginModal = forwardRef<HTMLButtonElement, LoginModalProps>(
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleSubmit}>
-            <div className="grid gap-4 py-4">
+            <div className="grid gap-4 py-4" suppressHydrationWarning>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="email" className="text-right">
                   Email
@@ -152,7 +152,7 @@ const LoginModal = forwardRef<HTMLButtonElement, LoginModalProps>(
                 />
               </div>
             </div>
-            <Button type="submit">{isLogin ? "Login" : "Sign Up"}</Button>
+            <Button suppressHydrationWarning type="submit">{isLogin ? "Login" : "Sign Up"}</Button>
             <Button type="button" variant="link" onClick={() => setIsLogin(!isLogin)}>
               {isLogin ? "Don't have an account? Sign up" : "Already have an account? Login"}
             </Button>
