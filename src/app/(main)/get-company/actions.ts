@@ -1,7 +1,7 @@
 "use server";
 
 export async function uploadCV(formData: FormData, token: string | null, userId: string | null) {
-  const cvFile = formData.get('cvFile') as File;
+  const cvFile = formData.get('File') as File;
 
   console.log('Received upload request for Get Company:');
   console.log('File:', cvFile.name, cvFile.size, cvFile.type);
