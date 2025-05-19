@@ -117,7 +117,7 @@ const GetCompanyPage = () => {
 
         {queryResponse && (
           <div className="mt-4 p-3 bg-green-100 text-green-700 rounded-md">
-            * File successfully uploaded. Query response: <strong>{queryResponse}</strong>.
+            * Công ty phù hợp: <strong>{queryResponse}</strong>.
           </div>
         )}
 
