@@ -6,10 +6,47 @@ export async function uploadCV(formData: FormData, token: string | null) {
   console.log('Received upload request for Get Company:');
   console.log('File:', cvFile.name, cvFile.size, cvFile.type);
 
-  const fileUploadUrl = `http://localhost:8080/file-cv-match-ai`;
   const queryApiUrl = `http://localhost:8080/api/agentAI/match`;
+  const fileUploadUrl = `http://localhost:8080/file-cv-match-ai`;
 
-  // First fetch: Upload the file
+  // First fetch: Send query and userId
+  let queryResponseData: any = null;
+  try {
+    const userId = sessionStorage.getItem('userId');
+    if (!userId) {
+      console.error('User ID not found in session storage.');
+      return { success: false, error: 'User ID is missing.', step: 'userId' };
+    }
+
+    const queryPayload = {
+      query: 'List all Skills in CV return as string only has skills and nothing else in front of it, for example abc cbd',
+      userId: userId,
+    };
+
+    console.log(`Attempting to send query to: ${queryApiUrl}`);
+    const queryResponse = await fetch(queryApiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(queryPayload),
+    });
+
+    if (queryResponse.ok) {
+      queryResponseData = await queryResponse.json();
+      console.log('Query sent successfully:', queryResponseData);
+    } else {
+      const errorText = await queryResponse.text();
+      console.error('Failed to send query:', queryResponse.status, errorText);
+      return { success: false, error: `Query Error: ${queryResponse.status} - ${errorText}`, step: 'query' };
+    }
+  } catch (error: any) {
+    console.error('Error during query operation:', error);
+    return { success: false, error: error.message || 'Unknown query error', step: 'query' };
+  }
+
+  // Second fetch: Upload the file
   try {
     if (!token) {
       console.error('Authentication token was not provided.');
@@ -35,45 +72,9 @@ export async function uploadCV(formData: FormData, token: string | null) {
     }
 
     console.log('File uploaded successfully.');
+    return { success: true, data: queryResponseData.companyName || 'Unknown Company' }; // Return company name
   } catch (error: any) {
     console.error('Error during file upload operation:', error);
     return { success: false, error: error.message || 'Unknown file upload error', step: 'fileUpload' };
-  }
-
-  // Second fetch: Send query and userId
-  try {
-    const userId = sessionStorage.getItem('userId');
-    if (!userId) {
-      console.error('User ID not found in session storage.');
-      return { success: false, error: 'User ID is missing.', step: 'userId' };
-    }
-
-    const queryPayload = {
-      query: 'List all Skills in CV return as string only has skills and nothing else in front of it, for example abc cbd',
-      userId: userId,
-    };
-
-    console.log(`Attempting to send query to: ${queryApiUrl}`);
-    const queryResponse = await fetch(queryApiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(queryPayload),
-    });
-
-    if (queryResponse.ok) {
-      const queryData = await queryResponse.json();
-      console.log('Query sent successfully:', queryData);
-      return { success: true, data: queryData.companyName || 'Unknown Company' }; // Return company name
-    } else {
-      const errorText = await queryResponse.text();
-      console.error('Failed to send query:', queryResponse.status, errorText);
-      return { success: false, error: `Query Error: ${queryResponse.status} - ${errorText}`, step: 'query' };
-    }
-  } catch (error: any) {
-    console.error('Error during query operation:', error);
-    return { success: false, error: error.message || 'Unknown query error', step: 'query' };
   }
 }
