@@ -27,7 +27,7 @@ const GetCompanyPage = () => {
     setQueryResponse(null);
 
     const formData = new FormData();
-    formData.append('cvFile', cvFile);
+    formData.append('File', cvFile);
 
     try {
       const token = sessionStorage.getItem('token');
