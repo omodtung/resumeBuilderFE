@@ -1,7 +1,12 @@
-import {DataProvider, fetchUtils, DeleteManyResult} from "react-admin"
+import { DataProvider, GetOneParams, DeleteManyResult } from "react-admin";
 import fetch from "node-fetch";
 
 const API_URL = "http://localhost:8080/admin";
+
+// Extend GetOneParams to include resume_id
+interface GetOneEducationParams extends GetOneParams<any> {
+    resume_id?: string;
+}
 
 export const dataProvider: DataProvider = {
     getList: async (resource, params) => {
@@ -96,6 +101,12 @@ export const dataProvider: DataProvider = {
                     ...item,
                     photoUrl: item.photoUrl || null,
                 }));
+            } else if (resource === 'educations') {
+                // Include resume_id in the education data
+                data = response.data.map((item: any) => ({
+                    ...item,
+                    resume_id: item.resume_id || null,
+                }));
             } else {
                 data = response.data;
             }
@@ -108,15 +119,49 @@ export const dataProvider: DataProvider = {
         };
     },
     getOne: async (resource, params) => {
-        // Get token from session storage
         const token = sessionStorage.getItem('token');
 
+        if (resource === 'educations') {
+            try {
+                const { id, resume_id } = params as GetOneEducationParams; // Cast params to the extended type
+
+                if (!resume_id) {
+                    console.error('resume_id is missing in params:', params);
+                    throw new Error('resume_id is required to fetch education.');
+                }
+
+                // Fetch the resume using the resume_id
+                const resumeResponse = await fetch(`${API_URL}/resumes/${resume_id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                }).then(res => res.json());
+
+                const resume = resumeResponse.resume;
+
+                // Find the specific education in the resume's educations array
+                const matchedEducation = resume.educations.find((edu: any) => edu.id === id);
+
+                if (matchedEducation) {
+                    return { data: matchedEducation };
+                } else {
+                    throw new Error('Education not found in the associated resume.');
+                }
+            } catch (error) {
+                console.error('Error fetching education:', error);
+                throw new Error('Failed to fetch education.');
+            }
+        }
+
+        // Default behavior for other resources
         const response = await fetch(`${API_URL}/${resource}/${params.id}`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
+                'Content-Type': 'application/json',
+            },
         }).then(res => res.json());
+
         const keys = Object.keys(response);
         const key = keys[0];
         let data = response[key];
@@ -124,8 +169,9 @@ export const dataProvider: DataProvider = {
             const userSubscriptionResponse = await fetch(`${API_URL}/user_subscription/${data.user_subscription_id}`).then(res => res.json());
             data.user_subscription = userSubscriptionResponse.user_subscription;
         }
+
         console.log(response);
-        return {data: data};
+        return { data: data };
     },
     getMany: async (resource, params) => {
         // Get token from session storage

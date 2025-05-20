@@ -94,13 +94,13 @@ const LoginModal = forwardRef<HTMLButtonElement, LoginModalProps>(
               ref={ref}
               variant="outline"
               onClick={() => setIsLogin(true)}
-              style={{ marginRight: "10px" }}
+              style={{ marginRight: "10px" }} suppressHydrationWarning
             >
               Login
             </Button>
           </DialogTrigger>
           <DialogTrigger asChild>
-            <Button variant="outline" onClick={() => setIsLogin(false)}>
+            <Button variant="outline" onClick={() => setIsLogin(false)} suppressHydrationWarning>
               Sign Up
             </Button>
           </DialogTrigger>
