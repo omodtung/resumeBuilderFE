@@ -58,7 +58,7 @@ export default function Page() {
           <NewResumeButton type="template" buttonText="New Template Resume" />
         </div>
         <Link href="/chat">
-          <Button className="mt-0">Chat with AI</Button>
+          <Button className="mt-0" suppressHydrationWarning>Chat with AI</Button>
         </Link>
       </div>
       <div className="flex w-full grid-cols-2 flex-col gap-3 sm:grid md:grid-cols-3 lg:grid-cols-4">
