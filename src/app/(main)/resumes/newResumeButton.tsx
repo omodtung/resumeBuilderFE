@@ -114,7 +114,7 @@ export default function NewResumeButton({ type, buttonText }: NewResumeButtonPro
   return (
     <Button
       onClick={handleClick}
-      className="flex w-fit items-center gap-2"
+      className="flex w-fit items-center gap-2" suppressHydrationWarning
     >
       <PlusSquare className="size-5" />
       {buttonText}

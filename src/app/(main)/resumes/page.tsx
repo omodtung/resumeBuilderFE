@@ -54,7 +54,7 @@ export default function Page() {
     <main className="mx-auto w-full max-w-7xl space-y-6 px-3 py-6">
       <div className="flex flex-col items-center">
         <div className="flex gap-2 justify-center mb-2">
-          <NewResumeButton type="blank" buttonText="New Blank Resume" />
+          <NewResumeButton type="blank" buttonText="New Blank Resume"/>
           <NewResumeButton type="template" buttonText="New Template Resume" />
         </div>
         <Link href="/chat">
